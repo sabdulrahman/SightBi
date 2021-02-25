@@ -4,6 +4,7 @@ html,body {
 	height: 100%;
 }
 
+
 :root {
   /* --totalcolsRows: repeat(4, 1fr) !important; */
 }
@@ -141,7 +142,6 @@ html,body {
 }
 
 .svg-container {
-	width: 400px;
     overflow: hidden;
 	position:relative;
 	z-index:1;

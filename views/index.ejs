@@ -109,7 +109,7 @@
       </div>
 	  
 	  	  
-	  <div class="clusterOM-data-box note the-node custom-data" id="clusterOM" style = "width:300px; height:300px;left:750px; bottom:0px; display:none; background-color: #FFFFFF;">
+	  <div class="clusterOM-data-box note the-node custom-data" id="clusterOM" style = "width:500px; height:500px;left:550px; bottom:0px; display:none; background-color: #FFFFFF;">
         <div class='close_note'>X</div>
         <h3>Cluster Organization Map &nbsp;
 		<label class="switch">
@@ -147,6 +147,7 @@
 	  
 	  
 	  <div class="btn-group" id="togglee" style="visibility:hidden;position:absolute;right:0px;float:left;" >
+  <button class="allclusterbut">All Cluster</button>
   <button class="biclusterbut">BiCluster</button>
   <button class="triclusterbut">TriCluster</button>
 </div>
@@ -948,6 +949,91 @@
             });
         });
 
+		ClusterChainToGM = [];
+        connections7cgm.forEach(conn => {
+			const ele = conn.source;
+			let sid = ele.getAttribute('clusterchainid')
+
+			domRect = ele.getBoundingClientRect();
+			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
+			let y1Loc = domRect.y+5;
+
+				domRect2 = conn.target.getBoundingClientRect();
+				let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+				let y2Loc = domRect2.y+5;
+
+            ClusterChainToGM.push({
+              source : {
+                id: "clusterchain",
+				ele:sid,
+                xOffset : x1Loc,
+                yOffset : y1Loc
+              },
+              target : {
+                id: "clusterGM",
+                xOffset : x2Loc,
+                yOffset : y2Loc
+              }
+            });
+        });
+
+		ClusterChainToGO = [];
+        connections7cgo.forEach(conn => {
+			const ele = conn.source;
+			let sid = ele.getAttribute('clusterchainid')
+
+			domRect = ele.getBoundingClientRect();
+			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
+			let y1Loc = domRect.y+5;
+			
+			domRect2 = conn.target.getBoundingClientRect();
+			let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+			let y2Loc = domRect2.y+5;
+            
+			ClusterChainToGO.push({
+              source : {
+                id: "clusterchain",
+				ele:sid,
+                xOffset : x1Loc,
+                yOffset : y1Loc
+              },
+              target : {
+                id: "clusterGO",
+                xOffset : x2Loc,
+                yOffset : y2Loc
+              }
+            });
+        });
+		
+		ClusterChainToOM = [];
+        connections7com.forEach(conn => {
+			const ele = conn.source;
+			let sid = ele.getAttribute('clusterchainid')
+
+			domRect = ele.getBoundingClientRect();
+			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
+			let y1Loc = domRect.y+5;
+			
+			domRect2 = conn.target.getBoundingClientRect();
+			let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+			let y2Loc = domRect2.y+5;
+
+            ClusterChainToOM.push({
+              source : {
+                id: "clusterchain",
+				ele:sid,
+                xOffset : x1Loc,
+                yOffset : y1Loc
+              },
+              target : {
+                id: "clusterOM",
+                xOffset : x2Loc,
+                yOffset : y2Loc
+              }
+            });
+        });
+
+
 		if(bubbleToTextCollection.length > 0) {
           drawPolyLineMap(bubbleToTextCollection);
         }
@@ -1030,6 +1116,18 @@
 		
 		if(ClusterChainToMap.length > 0) {
           drawPolyLineClusterChain(ClusterChainToMap);
+        }
+	
+		if(ClusterChainToGM.length > 0) {
+          drawPolyLineClusterChain(ClusterChainToGM);
+        }
+		
+		if(ClusterChainToGO.length > 0) {
+          drawPolyLineClusterChain(ClusterChainToGO);
+        }
+		
+		if(ClusterChainToOM.length > 0) {
+          drawPolyLineClusterChain(ClusterChainToOM);
         }
       }
 
@@ -1787,6 +1885,57 @@
           linkUpdate.enter()
           .append('path')
               .attr('class', 'link-newcbig')
+              .merge(linkUpdate)
+          .attr('d',lineFunc)
+		  .attr('ele',function(d,i){return collection[i].source.ele;})
+		  .attr('tar',function(d,i){return collection[i].target.ele;})
+          .style('stroke', '#95c7f4')
+          //.style('stroke-dasharray', '3,1.5')
+          .style('stroke-width', 2)
+          .style('fill', 'none').raise();
+      }
+	  	if(collection == ClusterChainToGM)
+		{
+        const linkUpdate = d3.select('#line-canvas').selectAll('.link-newcbigm')
+          .data(collection)
+
+          linkUpdate.enter()
+          .append('path')
+              .attr('class', 'link-newcbigm')
+              .merge(linkUpdate)
+          .attr('d',lineFunc)
+		  .attr('ele',function(d,i){return collection[i].source.ele;})
+		  .attr('tar',function(d,i){return collection[i].target.ele;})
+          .style('stroke', '#95c7f4')
+          //.style('stroke-dasharray', '3,1.5')
+          .style('stroke-width', 2)
+          .style('fill', 'none').raise();
+      }
+	  if(collection == ClusterChainToGO)
+	{
+        const linkUpdate = d3.select('#line-canvas').selectAll('.link-newcbigo')
+          .data(collection)
+
+          linkUpdate.enter()
+          .append('path')
+              .attr('class', 'link-newcbigo')
+              .merge(linkUpdate)
+          .attr('d',lineFunc)
+		  .attr('ele',function(d,i){return collection[i].source.ele;})
+		  .attr('tar',function(d,i){return collection[i].target.ele;})
+          .style('stroke', '#95c7f4')
+          //.style('stroke-dasharray', '3,1.5')
+          .style('stroke-width', 2)
+          .style('fill', 'none').raise();
+      }
+	 if(collection == ClusterChainToOM)
+	{
+        const linkUpdate = d3.select('#line-canvas').selectAll('.link-newcbiom')
+          .data(collection)
+
+          linkUpdate.enter()
+          .append('path')
+              .attr('class', 'link-newcbiom')
               .merge(linkUpdate)
           .attr('d',lineFunc)
 		  .attr('ele',function(d,i){return collection[i].source.ele;})
@@ -3310,47 +3459,81 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 	
 	function ClusterOMdata() {
 		  
-	var margin = {top: 10, right: 30, bottom: 30, left: 60},
-		width = 460 - margin.left - margin.right,
-		height = 400 - margin.top - margin.bottom;
+	var margin = {top: 30, right: 30, bottom: 30, left: 30},
+		width = 1400 - margin.left - margin.right,
+		height = 1000 - margin.top - margin.bottom;
 			  
 			 body = d3.select(".clusterOM-data-box")
 					.classed("svg-container", true);
 					
-			 var svg = body.append("svg").attr("preserveAspectRatio", "xMinYMin meet")
-										.attr("viewBox", "0 0 450 450")
-		.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+			 var svg = body.append("svg").attr("preserveAspectRatio", "xMinYMin meet").attr("id","svgclusterom")
+										.attr("viewBox", "0 0 1600 1600").attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
 	var xValue = function(d) { return d.x;},
 	  x = d3.scaleLinear()
-		.range([ 0, width ]),
+		.range([ -100, width ]),
+		xMap0 = function(d) { return x(xValue(d))-65;};
 		xMap = function(d) { return x(xValue(d))-50;};
 	  
+		xMap2 = function(d) { return x(xValue(d))+25;};
 
 	var yValue = function(d) { return d["y"];},
 	   y = d3.scaleLinear()
-		.range([ height, 0]),
+		.range([ height+800, 0]),
+		yMap0 = function(d) { return y(yValue(d))+40;};
 		yMap = function(d) { return y(yValue(d))+50;};
 
-
+		yMap2 = function(d) { return y(yValue(d))+50;};
 	  d3.csv("locxorg.csv", function(data){
 	  
 	  x.domain([d3.min(data, xValue)-1.2, d3.max(data, xValue)+1]);
 	  y.domain([d3.min(data, yValue)-1.2, d3.max(data, yValue)+1]);
 	 
-
-	svg.selectAll(".dot")
+	 	svg.selectAll(".recta")
 		  .data(data)
-		.enter().append("circle")
-		  .attr("class", "dot")
-		  .attr("r", 10)
-		  .attr("cx", xMap)
-		  .attr("cy", yMap)
+		.enter().append("rect")
+		  .attr("class", "recta")
+		  .attr('width', function(d){return d['organize'].length+30;})
+		  .attr('height', 40)
+		  .attr("x", xMap)
+		  .attr("y", yMap)
+		  .style("fill", '#ad9ee3')
+		   .attr('stroke', '#000000')
+			.attr('stroke-width', '2')
+		  .attr('map',function(d){return d['organize'];})
+		  .attr('clusteromoid',function(d,i){return (i+1);});
+
+	svg.selectAll(".rectb")
+		  .data(data)
+		.enter().append("rect")
+		  .attr("class", "rectb")
+		  .attr('width', function(d){return d['map'].length+30;})
+		  .attr('height', 40)
+		  .attr("x", xMap2)
+		  .attr("y", yMap2)
+		.style("fill", '#add8e6')
+				   .attr('stroke', '#000000')
+			.attr('stroke-width', '2')
+		  .attr('org',function(d){return d['map'];})
+		  	  .attr('clusterommid',function(d,i){return (i+1);});
+	 
+			svg.selectAll(".rectc")
+				.data(data)
+			.enter()
+			.append("rect")
+			.attr('width', 160)
+		  .attr('height', 60)
+		  .attr("x", xMap0)
+		  .attr("y", yMap0)
+		  .style("fill", '#ffffff')
+		   .attr('stroke', '#000000 ')
+	       .attr("fill-opacity", 0)
+		  .attr('stroke-width', '2')
+		  .attr("stroke-opacity","0.5")
 		  .attr('map',function(d){return d['map'];})
 		  .attr('org',function(d){return d['organize'];})
-		  .style("fill", '#ad9ee3')
 		  .attr("clickhist",0)
-		  .attr('clusteromid',function(d,i){return (i+1);})
+	  .attr('clusteromid',function(d,i){return (i+1);})
 		  .on("mouseover", ClusterOMhover)
 		  .on("mouseout",ClusterOMout)
 		  .on('mouseup',ClusterOMclick);		  
@@ -3366,7 +3549,7 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 		};
       })
       }
-	
+
 	function ClusterOMclick(){
 	if(window.getSelection) {
           let selection = window.getSelection();
@@ -3627,8 +3810,8 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			else{clusterOMclickon=false}
 			}
             }}
-	
-		function ClusterOMhover() {
+
+function ClusterOMhover() {
 			
 		    let $event = event;
             let ele = $event.target;
@@ -3643,9 +3826,10 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			for(var j = 0; j<locs.split(',').length;j++)
 			{
 			loc = locs.split(',')[j];
-			let bubble = d3.select('[map-id="map' + loc + '"]');
 			if(document.querySelector('.right .bubblemap-box').style.display == 'block')
 			{
+			let bubble = d3.select('[map-id="map' + loc + '"]');
+
 			let x2Loc =  parseFloat($('.bubblemap-box').css('left').split('px')[0]) + bubble.node().getBBox().x + bubble.node().getBBox().width;
             let y2Loc = parseFloat($('.bubblemap-box').css('top').split('px')[0]) + bubble.node().getBBox().y + (bubble.node().getBBox().height/2) + 37;
 			
@@ -3661,8 +3845,13 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
                       yOffset : y2Loc
                     }
                   });
+				  			if(d3.select(this).style("fill")=="rgb(173, 158, 227)"){
+			d3.select(this).style("fill", "#485D5E");
+			d3.select(this).attr("r", function(d){ return 15 })}
+			drawPolyLineClusterOM(ClusterOMTempCollection);
 			}
 			}
+			
 			for(var j = 0; j<orgs.split(',').length;j++)
 			{
 			org = orgs.split(',')[j];
@@ -3689,7 +3878,19 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			d3.select(this).style("fill", "#485D5E");
 			d3.select(this).attr("r", function(d){ return 15 })}
 			drawPolyLineClusterOM(ClusterOMTempCollection);
-		}}}
+		}}
+		
+		var svg = d3.select("#svgclusterom");
+
+		svg.append("path")
+			  .attr("d","M 1140 836 Q 1140 524.116116646641 666.798713181312 524.116116646641 M 1060 840 Q 666 840.116116646641 666.798713181312 524.116116646641 M 340 260 C 503 260 503 524 666.116116646641 524.798713181312")
+			  //.attr("d","M 1040.798713181312 826.116116646641 C 719.604 826.116116646641 719.604 243.2472809151684 398.41000833109484 243.2472809151684")
+			  .attr("fill", "none")
+			  .attr("stroke-width","2")
+				.attr('stroke', '#000000 ');
+		
+		}
+
 
     function ClusterOMout(){
 		ClusterOMTempCollection = [],
@@ -4147,11 +4348,11 @@ function change() {
 }
 	}
 
-let ClusterChainTempCollection = [],ClusterChainToGraph=[],ClusterChainToMap=[],ClusterChainToOrg=[],
-connections7cg=[],connections7cm=[],connections7co=[],clusterChainclickon=false;
+let ClusterChainTempCollection = [],ClusterChainToGraph=[],ClusterChainToMap=[],ClusterChainToOrg=[],ClusterChainToGM=[],ClusterChainToOM=[],ClusterChainToGO=[]
+connections7cg=[],connections7cm=[],connections7co=[],connections7cgm=[],connections7cgo=[],connections7com=[],clusterChainclickon=false;
 
 
-	function datesdata(){
+	function ClusterChain(){
 
 var margin = {top: 10, right: 30, bottom: 30, left: 60},
     width = 460 - margin.left - margin.right,
@@ -4181,22 +4382,24 @@ var yValue = function(d) { return d["y"];},
   count = []
 for(var i = 0;i<data.length;i++)
 {
-	count.push(data[i]['count'])
+	count.push(data[i]['perc'])
 }
 
  var sliderSimple = d3
     .sliderBottom()
-    .min(d3.min(count))
-    .max(d3.max(count))
+    .min(0.2)
+    .max(1)
+	.tickFormat(d3.format('.0%'))
     .width(300)
-	.step(1)
-	.default(d3.min(count))
-	.ticks(7)
+	.step(0.2)
+	.default(0.2)
+	.ticks(5)
     .on('onchange', val => {
 		d3.selectAll('.circlechain').remove();
 		
 		tempdata = [];
-		ClusterChainToMap = [], ClusterChainToOrg = [],ClusterChainToMap=[],connections7cm=[],connections7co=[],connections7cg=[];
+		ClusterChainToMap = [], ClusterChainToOrg = [],ClusterChainToMap=[],ClusterChainToGM=[],ClusterChainToGO=[],ClusterChainToOM=[],
+		connections7cm=[],connections7co=[],connections7cg=[],connections7cgm=[],connections7cgo=[],connections7com=[];
             document.querySelectorAll('.link-newcbig').forEach(ele => {
               ele.remove();
             });
@@ -4204,6 +4407,15 @@ for(var i = 0;i<data.length;i++)
               ele.remove();
             });
 			document.querySelectorAll('.link-newcbio').forEach(ele => {
+              ele.remove();
+            });
+			document.querySelectorAll('.link-newcbigm').forEach(ele => {
+              ele.remove();
+            });
+			document.querySelectorAll('.link-newcbigo').forEach(ele => {
+              ele.remove();
+            });
+			document.querySelectorAll('.link-newcbiom').forEach(ele => {
               ele.remove();
             });
 		
@@ -4214,12 +4426,7 @@ for(var i = 0;i<data.length;i++)
 		
 		for (var i = tempdata.length-1; i >= 0; --i) {
 		
-		if(tempdata[i]['match'] == 1)
-		{
-			continue;
-		}
-		
-		if (tempdata[i]['count'] < val) {
+		if (tempdata[i]['perc'] < val) {
 				tempdata.splice(i, 1); 
 		}}
 		changes(tempdata);
@@ -4287,7 +4494,139 @@ function ClusterChainhover() {
 			domRect = ele.getBoundingClientRect();
 			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
 			let y1Loc = domRect.y+5;
-			
+			var clustergo = $("[clustergoid]")
+			var clustergm = $("[clustergmid]")
+			var clusterom = $("[clusteromid]")
+			for(var i=0;i<clustergo.length;i++)
+			{
+				if(orgs==clustergo[i].getAttribute('org'))
+				{
+					goid = clustergo[i].getAttribute('clustergoid')
+					let circid = document.querySelector('[clustergoid="' + goid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainTempCollection.push({
+                    source : {
+                      id: "clusterchain",
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterGO",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				}
+				if(persons==clustergo[i].getAttribute('person'))
+				{
+					goid = clustergo[i].getAttribute('clustergoid')
+					let circid = document.querySelector('[clustergoid="' + goid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainTempCollection.push({
+                    source : {
+                      id: "clusterchain",
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterGO",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				}
+			}
+			for(var i=0;i<clustergm.length;i++)
+			{
+				if(persons==clustergm[i].getAttribute('person'))
+				{
+					gmid = clustergm[i].getAttribute('clustergmid')
+					let circid = document.querySelector('[clustergmid="' + gmid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainTempCollection.push({
+                    source : {
+                      id: "clusterchain",
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterGM",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				}
+				if(locs==clustergm[i].getAttribute('map'))
+				{
+					gmid = clustergm[i].getAttribute('clustergmid')
+					let circid = document.querySelector('[clustergmid="' + gmid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainTempCollection.push({
+                    source : {
+                      id: "clusterchain",
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterGM",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				}
+			}
+			for(var i=0;i<clusterom.length;i++)
+			{
+				if(orgs==clusterom[i].getAttribute('org'))
+				{
+					omid = clusterom[i].getAttribute('clusteromid')
+					let circid = document.querySelector('[clusteromid="' + omid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainTempCollection.push({
+                    source : {
+                      id: "clusterchain",
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterOM",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				}
+				if(locs==clusterom[i].getAttribute('map'))
+				{
+					omid = clusterom[i].getAttribute('clusteromid')
+					let circid = document.querySelector('[clusteromid="' + omid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainTempCollection.push({
+                    source : {
+                      id: "clusterchain",
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterOM",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				}
+			}
+
 			for(var j = 0; j<locs.split(',').length;j++)
 			{
 			loc = locs.split(',')[j];
@@ -4497,6 +4836,21 @@ function ClusterChainhover() {
 			  if (ClusterChainToGraph[i].source.ele == nameid) {
 				ClusterChainToGraph.splice(i, 1); 
 			  }}   
+			
+			for (var i = ClusterChainToGM.length - 1; i >= 0; --i) {
+			  if (ClusterChainToGM[i].source.ele == nameid) {
+				ClusterChainToGM.splice(i, 1); 
+			  }}
+			  
+			for (var i = ClusterChainToGO.length - 1; i >= 0; --i) {
+			  if (ClusterChainToGO[i].source.ele == nameid) {
+				ClusterChainToGO.splice(i, 1); 
+			  }} 
+			
+			for (var i = ClusterChainToOM.length - 1; i >= 0; --i) {
+			  if (ClusterChainToOM[i].source.ele == nameid) {
+				ClusterChainToOM.splice(i, 1); 
+			  }}   
 			  
 			for (var i = connections7co.length - 1; i >= 0; --i) {
 			  if (connections7co[i].source == ele) {
@@ -4511,6 +4865,21 @@ function ClusterChainhover() {
 			  if (connections7cg[i].source == ele) {
 				connections7cg.splice(i, 1); 
 			  }}
+			 
+			 for (var i = connections7cgm.length - 1; i >= 0; --i) {
+			  if (connections7cgm[i].source == ele) {
+				connections7cgm.splice(i, 1); 
+			  }}
+			  
+			for (var i = connections7cgo.length - 1; i >= 0; --i) {
+			  if (connections7cgo[i].source == ele) {
+				connections7cgo.splice(i, 1); 
+			  }}
+			for (var i = connections7com.length - 1; i >= 0; --i) {
+			  if (connections7com[i].source == ele) {
+				connections7com.splice(i, 1); 
+			  }}
+			  
 			  
 			document.querySelectorAll('.link-newcbim').forEach(ele => {
               if(ele.getAttribute('ele') == nameid){
@@ -4524,7 +4893,19 @@ function ClusterChainhover() {
               if(ele.getAttribute('ele') == nameid){
 				  ele.remove();
 			  }});
-			  
+			 
+			document.querySelectorAll('.link-newcbigm').forEach(ele => {
+              if(ele.getAttribute('ele') == nameid){
+				  ele.remove();
+			  }});
+			document.querySelectorAll('.link-newcbigo').forEach(ele => {
+              if(ele.getAttribute('ele') == nameid){
+				  ele.remove();
+			  }});
+			document.querySelectorAll('.link-newcbiom').forEach(ele => {
+              if(ele.getAttribute('ele') == nameid){
+				  ele.remove();
+			  }});
 			
 			if(event.target.getAttribute('clickhist') > 0)
 			   {
@@ -4533,6 +4914,185 @@ function ClusterChainhover() {
 			   }
 			
 			if(clusterChainclickon==false){
+			
+			var clustergo = $("[clustergoid]")
+			var clustergm = $("[clustergmid]")
+			var clusterom = $("[clusteromid]")
+			
+			if(document.querySelector('.right .clusterGO-data-box').style.display == 'block')
+			{
+			for(var i=0;i<clustergo.length;i++)
+			{
+				if(orgs==clustergo[i].getAttribute('org'))
+				{
+					goid = clustergo[i].getAttribute('clustergoid')
+					let circid = document.querySelector('[clustergoid="' + goid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					
+					ClusterChainToGO.push({
+                    source : {
+                      id: "clusterchain",
+					  ele:nameid,
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterGO",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				  connections7cgo.push({ source: ele, target: circid, boxElement: 'clusterchain' });
+				}
+				if(persons==clustergo[i].getAttribute('person'))
+				{
+					goid = clustergo[i].getAttribute('clustergoid')
+					let circid = document.querySelector('[clustergoid="' + goid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainToGO.push({
+                    source : {
+                      id: "clusterchain",
+					  ele:nameid,
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterGO",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				  connections7cgo.push({ source: ele, target: circid, boxElement: 'clusterchain' });
+				}
+			}
+			d3.select(this).style("fill", "#01579b");
+			clusterChainclickon = true;
+			d3.select(this).attr("r", function(d){ return 10 });
+			hist = parseInt(event.target.getAttribute('clickhist'))+1;
+			event.target.setAttribute('clickhist', hist);
+			drawPolyLineClusterChain(ClusterChainToGO);
+			}
+			
+			if(document.querySelector('.right .clusterGM-data-box').style.display == 'block')
+			{
+			for(var i=0;i<clustergm.length;i++)
+			{
+				if(persons==clustergm[i].getAttribute('person'))
+				{
+					gmid = clustergm[i].getAttribute('clustergmid')
+					let circid = document.querySelector('[clustergmid="' + gmid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainToGM.push({
+                    source : {
+                      id: "clusterchain",
+					  ele:nameid,
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterGM",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				connections7cgm.push({ source: ele, target: circid, boxElement: 'clusterchain' });
+				}
+				if(locs==clustergm[i].getAttribute('map'))
+				{
+					gmid = clustergm[i].getAttribute('clustergmid')
+					let circid = document.querySelector('[clustergmid="' + gmid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainToGM.push({
+                    source : {
+                      id: "clusterchain",
+					  ele:nameid,
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterGM",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				connections7cgm.push({ source: ele, target: circid, boxElement: 'clusterchain' });
+				}
+			}
+			d3.select(this).style("fill", "#01579b");
+			clusterChainclickon = true;
+			d3.select(this).attr("r", function(d){ return 10 });
+			hist = parseInt(event.target.getAttribute('clickhist'))+1;
+			event.target.setAttribute('clickhist', hist);
+			drawPolyLineClusterChain(ClusterChainToGM);
+			}
+			
+			if(document.querySelector('.right .clusterOM-data-box').style.display == 'block')
+			{
+			for(var i=0;i<clusterom.length;i++)
+			{
+				if(orgs==clusterom[i].getAttribute('org'))
+				{
+					omid = clusterom[i].getAttribute('clusteromid')
+					let circid = document.querySelector('[clusteromid="' + omid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainToOM.push({
+                    source : {
+                      id: "clusterchain",
+					  ele:nameid,
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterOM",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				connections7com.push({ source: ele, target: circid, boxElement: 'clusterchain' });
+
+				}
+				if(locs==clusterom[i].getAttribute('map'))
+				{
+					omid = clusterom[i].getAttribute('clusteromid')
+					let circid = document.querySelector('[clusteromid="' + omid + '"]');
+					domRect2 = circid.getBoundingClientRect();
+					let x2Loc = domRect2.x-document.getElementById('leftplace').offsetWidth+5;
+					let y2Loc = domRect2.y+5;
+					ClusterChainToOM.push({
+                    source : {
+                      id: "clusterchain",
+					  ele:nameid,
+                      xOffset : x1Loc,
+                      yOffset : y1Loc
+                    },
+                    target : {
+                      id: "clusterOM",
+                      xOffset : x2Loc,
+                      yOffset : y2Loc
+                    }
+                  });
+				connections7com.push({ source: ele, target: circid, boxElement: 'clusterchain' });
+				}
+			}
+			d3.select(this).style("fill", "#01579b");
+			clusterChainclickon = true;
+			d3.select(this).attr("r", function(d){ return 10 });
+			hist = parseInt(event.target.getAttribute('clickhist'))+1;
+			event.target.setAttribute('clickhist', hist);
+			drawPolyLineClusterChain(ClusterChainToOM);
+			}
+			
+				
 			for(var j = 0; j<locs.split(',').length;j++)
 			{
 			loc = locs.split(',')[j];
@@ -4636,7 +5196,6 @@ function ClusterChainhover() {
             }}
 
 	
-		
 	}
 
 
@@ -4876,7 +5435,8 @@ function ClusterChainhover() {
           }
 			
 		if($(this).parent().hasClass('clusterGM-data-box')){
-            ClusterGMToGraph = [], ClusterGMToMap = [],ClusterGMToTextCollection=[],connections4cg=[],connections4cm=[],connections4ct=[];
+            ClusterGMToGraph = [], ClusterGMToMap = [],ClusterGMToTextCollection=[],ClusterChainToGM=[],
+			connections4cg=[],connections4cm=[],connections4ct=[],connections7cgm=[];
             document.querySelectorAll('.link-newcgmg').forEach(ele => {
               ele.remove();
             });
@@ -4884,6 +5444,9 @@ function ClusterChainhover() {
               ele.remove();
             });
 			document.querySelectorAll('.link-newcgmt').forEach(ele => {
+              ele.remove();
+            });
+			document.querySelectorAll('.link-newcbigm').forEach(ele => {
               ele.remove();
             });
           }
@@ -4905,7 +5468,8 @@ function ClusterChainhover() {
 		
 		
 		if($(this).parent().hasClass('clusterGO-data-box')){
-            ClusterGOToGraph = [], ClusterGOToOrg = [],ClusterGOToTextCollection=[],connections5cg=[],connections5co=[],connections5ct=[];
+            ClusterGOToGraph = [], ClusterGOToOrg = [],ClusterGOToTextCollection=[],ClusterChainToGO=[],
+			connections5cg=[],connections5co=[],connections5ct=[],connections7cgo=[];
             document.querySelectorAll('.link-newcgog').forEach(ele => {
               ele.remove();
             });
@@ -4913,6 +5477,9 @@ function ClusterChainhover() {
               ele.remove();
             });
 			document.querySelectorAll('.link-newcgot').forEach(ele => {
+              ele.remove();
+            });
+			document.querySelectorAll('.link-newcbigo').forEach(ele => {
               ele.remove();
             });
           }
@@ -4934,7 +5501,8 @@ function ClusterChainhover() {
 		  
 		  
 		  if($(this).parent().hasClass('clusterOM-data-box')){
-            ClusterOMToMap = [], ClusterOMToOrg = [],ClusterOMToTextCollection=[],connections6cm=[],connections6co=[],connections6ct=[];
+            ClusterOMToMap = [], ClusterOMToOrg = [],ClusterOMToTextCollection=[],ClusterChainToOM=[],
+			connections6cm=[],connections6co=[],connections6ct=[],connections7com=[];
             document.querySelectorAll('.link-newcomm').forEach(ele => {
               ele.remove();
             });
@@ -4942,6 +5510,9 @@ function ClusterChainhover() {
               ele.remove();
             });
 			document.querySelectorAll('.link-newcomt').forEach(ele => {
+              ele.remove();
+            });
+			document.querySelectorAll('.link-newcbiom').forEach(ele => {
               ele.remove();
             });
           }
@@ -4962,8 +5533,9 @@ function ClusterChainhover() {
 		  }})
 		  
 		  
-		  if($(this).parent().hasClass('clusterChain-data-box')){
-            ClusterChainToMap = [], ClusterChainToOrg = [],ClusterChainToMap=[],connections7cm=[],connections7co=[],connections7cg=[];
+		  if($(this).parent().hasClass('clusterchain-data-box')){
+            ClusterChainToMap = [], ClusterChainToOrg = [],ClusterChainToMap=[],ClusterChainToGM=[],ClusterChainToGO=[],ClusterChainToOM=[],
+			connections7cm=[],connections7co=[],connections7cg=[],connections7cgm=[],connections7cgo=[],connections7com=[];
             document.querySelectorAll('.link-newcbig').forEach(ele => {
               ele.remove();
             });
@@ -4971,6 +5543,15 @@ function ClusterChainhover() {
               ele.remove();
             });
 			document.querySelectorAll('.link-newcbio').forEach(ele => {
+              ele.remove();
+            });
+			document.querySelectorAll('.link-newcbigm').forEach(ele => {
+              ele.remove();
+            });
+			document.querySelectorAll('.link-newcbigo').forEach(ele => {
+              ele.remove();
+            });
+			document.querySelectorAll('.link-newcbiom').forEach(ele => {
               ele.remove();
             });
           }
@@ -5057,6 +5638,7 @@ function ClusterChainhover() {
 		if(document.querySelector('.right .bubblemap-box').style.display == 'block' && document.querySelector('.right .organize-data-box').style.display == 'block' && document.querySelector('.right .all-data-box').style.display == 'block')
 		{
 			document.getElementById('togglee').style.visibility = 'visible';
+			document.querySelector('.right .clusterchain-data-box').style.display = 'block';
 		}	
         });
 	
@@ -5083,6 +5665,15 @@ function ClusterChainhover() {
 			document.querySelector('.right .clusterGO-data-box').style.display = 'block';
 		  document.querySelector('.right .clusterGM-data-box').style.display = 'block';
 		  });
+		
+		document.querySelector('.allclusterbut').addEventListener('click', function() {
+		document.querySelector('.right .clusterchain-data-box').style.display = 'block';
+		document.querySelector('.right .clusterOM-data-box').style.display = 'block';
+		document.querySelector('.right .clusterGO-data-box').style.display = 'block';
+		document.querySelector('.right .clusterGM-data-box').style.display = 'block';
+		  });
+
+
 
 		if(document.querySelector('.right .bubblemap-box').style.display == 'none' || document.querySelector('.right .organize-data-box').style.display == 'none' && document.querySelector('.right .all-data-box').style.display == 'none')
 		{
@@ -5127,7 +5718,7 @@ function ClusterChainhover() {
 		organizedata();
 		ClusterGOdata();
 		ClusterOMdata();
-        datesdata();
+        ClusterChain();
 		$(".note").css('z-index',99).draggable({
           containment: "#board",
           grid: [5, 5],
