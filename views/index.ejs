@@ -62,10 +62,11 @@
     </svg>
 	
     <div class="right" id="board" style = "position:relative;">
-      <div class="all-data-box note the-node custom-data" style ="left:750px;top:10px;" data-dialog="graph">
+	
+      <div class="all-data-box note the-node custom-data"  style ="left:750px;top:10px;" data-dialog="graph">
         <div class='close_note'>X</div>
         <h3>Graph Header</h3>
-        <div class="all-data-wrapper">
+        <div class="all-data-wrapper" id="graphbox">
           <p class="all-data"></p>
         </div>
       </div>
@@ -79,7 +80,7 @@
       <div class="bubblemap-box note the-node custom-data" data-dialog="bubble-map" style = "left:10px; top:10px;width:700px; height:400px;">
         <div class='close_note'>X</div>
         <h3>Bubble Map Header</h3>
-        <div class="bubblemap-wrapper">
+        <div class="bubblemap-wrapper" id="mapbox">
           <p class="bubblemap">
             <span class="loading-text">Please wait while data is being fetched...</span>
             <svg id="bubbleMap" width="630" height="350"></svg>
@@ -109,7 +110,7 @@
       </div>
 	  
 	  	  
-	  <div class="clusterOM-data-box note the-node custom-data" id="clusterOM" style = "width:500px; height:500px;left:550px; bottom:0px; display:none; background-color: #FFFFFF;">
+	  <div class="clusterOM-data-box note the-node custom-data" id="clusterOM" style = "left:550px; bottom:0px; display:none; background-color: #FFFFFF;">
         <div class='close_note'>X</div>
         <h3>Cluster Organization Map &nbsp;
 		<label class="switch">
@@ -129,8 +130,8 @@
 	  <div class="dates-data-box note the-node custom-data" style = "width:500px; height:450px; display:none; background-color: #FFFFFF;">
         <div class='close_note'>X</div>
         <h3>Dates</h3>
-		<iframe src='https://cdn.knightlab.com/libs/timeline3/latest/embed/index.html?source=1flz6jptgGvmZaC-HzyWyOyEatFBj4uXXS6HDil3RVLI&font=Default&lang=en&initial_zoom=2&height=500'
-		width='100%' height='500' webkitallowfullscreen mozallowfullscreen allowfullscreen frameborder='0'></iframe>
+		//<iframe src='https://cdn.knightlab.com/libs/timeline3/latest/embed/index.html?source=1flz6jptgGvmZaC-HzyWyOyEatFBj4uXXS6HDil3RVLI&font=Default&lang=en&initial_zoom=2&height=500'
+		width='100%' height='400' webkitallowfullscreen mozallowfullscreen allowfullscreen frameborder='0'></iframe>
       </div>
 	  
 	  <div class="clusterchain-data-box note the-node custom-data" id = "clusterChain" style = "display:none; width:400px; background-color: #FFFFFF;">
@@ -154,9 +155,8 @@
 	  
     </div>
     <ul class="custom-menu">
-      <li class="menu-item">Highlight Test</li>
+      <li class="menu-item">Highlight Text</li>
       <li class="menu-item">Unhighlight Text</li>
-      <li class="menu-item">Option 3</li>
     </ul>
 
     <ul class="svg-custom-menu">
@@ -203,6 +203,9 @@
       foreign.setAttribute('id', 'boardG');
       foreign.appendChild(document.getElementById('board'));
       globalG.appendChild(foreign);
+		
+	  var tooltip = d3.select('#mapbox').append("div").attr("class", "toolTip");		
+	  var tooltip2 = d3.select('#graphbox').append("div").attr("class", "toolTip");		
 
       let positions = {
         'graph' : {
@@ -266,9 +269,16 @@
       }
 
       function lineFunc(d){
+		  //console.log(d)
         let data = [[accessor.x1(d), accessor.y1(d)],
             [accessor.x2(d), accessor.y2(d)]];
-        return d3.line().curve(d3.curveCardinal)(data);
+						
+  return "M" + data[0][0] + "," + data[0][1]
+      + "C" + (data[0][0] + data[1][0]) / 2 + "," + data[0][1]
+      + " " + (data[0][0] + data[1][0]) / 2 + "," + data[1][1]
+      + " " + data[1][0] + "," + data[1][1]; 
+
+	  //return d3.line().curve(d3.curveNatural)(data);
       }
 
       function drawBubbleMap() {
@@ -286,6 +296,9 @@
           .defer(d3.csv, "./map-data.csv")
           .await(ready);
       }
+
+	var timeout = setTimeout(function(d){tooltip.style("display", "none");},1000);	
+	var timeout2 = setTimeout(function(d){tooltip2.style("display", "none");},1000);	
 
       function ready(error, dataGeo, data) {
         var allContinent = d3.map(data, function(d){return(d.continent)}).keys()
@@ -329,8 +342,8 @@
                 return d.location;
               })
 			  .attr('map-id', function(d,i){ return 'map' + (i); })
-			  //.attr('clicked' ,false)
 			  .attr('clickhist', 0)
+			  .attr('clicked',false)
 			  .on("mouseover", maphover)
 			  .on("mouseout",mapout)
 			  .on("mouseup",mapClick);
@@ -1131,7 +1144,7 @@
         }
       }
 
-      let bubbleToTextCollection = [],bubbleToGraphCollection = [],bubbleToOrgCollection=[],mapclickon = false,
+      let bubbleToTextCollection = [],bubbleToGraphCollection = [],bubbleToOrgCollection=[],
 	  connections1bo=[],connections1bt=[],connections1bg=[], bubbleCollectiontemp = [];
 	  
       function mapClick() {
@@ -1142,7 +1155,8 @@
             let ele = $event.target;      
             let loc = event.target.getAttribute('data-location');
 			let locid = event.target.getAttribute('map-id');
-						
+			let clicked = event.target.getAttribute('clicked');
+
 			let x1Loc = parseFloat($('.bubblemap-box').css('left').split('px')[0]) + ele.getBBox().x + ele.getBBox().width+5;
             let y1Loc = parseFloat($('.bubblemap-box').css('top').split('px')[0]) + ele.getBBox().y + (ele.getBBox().height/2) + 40;
 			
@@ -1269,15 +1283,12 @@
 			  
 			document.querySelectorAll('.link-newbg').forEach(ele => {
               if(ele.getAttribute('ele') == locid){
-				  //mapclickon = true;
 				  ele.remove();
 			  }});
 			document.querySelectorAll('.link-newbo').forEach(ele => {
               if(ele.getAttribute('ele') == locid){
-				  //mapclickon = true;
 				  ele.remove();
 			  }});
-			//console.log(d3.select(this).style("fill"));
 			if(event.target.getAttribute('clickhist') > 0)
 			   {
 				  d3.select(this).style("fill", "#d5212e");
@@ -1285,7 +1296,7 @@
 			   }
 
 			
-			if(mapclickon == false){
+			if(clicked == "false"){
 			let names = [],org = [];
 			for(var i =0;i<ids.length;i++)
 			{
@@ -1323,6 +1334,7 @@
 				}
 				hist = parseInt(event.target.getAttribute('clickhist'))+1
 				event.target.setAttribute('clickhist', hist)
+				event.target.setAttribute('clicked', true)
 				drawPolyLineMap(bubbleToGraphCollection);
 				}
 			if(document.querySelector('.right .organize-data-box').style.display == 'block')
@@ -1357,18 +1369,17 @@
 				}			
 				hist = parseInt(event.target.getAttribute('clickhist'))+1
 				event.target.setAttribute('clickhist', hist)
+				event.target.setAttribute('clicked', true)
 				drawPolyLineMap(bubbleToOrgCollection);
 			}
 			}
 			}
 			
 			else{
-
-				mapclickon = false;
+				event.target.setAttribute('clicked', false)
 			}}
           }
         }
-
 
 	function maphover(){
 		
@@ -1376,12 +1387,23 @@
             let ele = $event.target;      
  			let locid = event.target.getAttribute('map-id');
 			let loc = event.target.getAttribute('data-location');
+			let clicked = event.target.getAttribute('clicked');
+
 			
 			let x1Loc = parseFloat($('.bubblemap-box').css('left').split('px')[0]) + ele.getBBox().x + ele.getBBox().width+5;
             let y1Loc = parseFloat($('.bubblemap-box').css('top').split('px')[0]) + ele.getBBox().y + (ele.getBBox().height/2) + 40;
 			
-			let ids = []
-
+			clearTimeout(timeout);
+			tooltip
+			.style("left", x1Loc + "px")
+            .style("top", y1Loc + "px")
+            .style("display", "inline-block")
+            .html(loc);
+			
+			let ids = [];
+																	
+			if(clicked != "true")
+			{			
 			for(var val in documentData){
 				if(documentData[val].location.includes(loc))
 				{
@@ -1457,12 +1479,15 @@
 				}
 			}
 			}
+			}
 	}
 	
 	function mapout(){
 		bubbleCollectiontemp = [];
-
-			if((d3.select(this).style("fill")== "rgb(72, 93, 94)")){
+		
+		timeout = setTimeout(function(d){tooltip.style("display", "none");},1000)
+		
+		if((d3.select(this).style("fill")== "rgb(72, 93, 94)")){
 				d3.select(this).style("fill", "#ad9ee3");
 			d3.select(this).attr("r", function(d){ return 5 })}
 			
@@ -2110,7 +2135,7 @@
         });
       }
       
-      let lineDataCollection = [],GraphToMapCollection = [],connections2gm = [],GraphToTextCollection=[],connections2gt=[],graphclickon = false,
+      let lineDataCollection = [],GraphToMapCollection = [],connections2gm = [],GraphToTextCollection=[],connections2gt=[],
 	  GraphToOrgCollection=[],connections2go=[],GraphCollectionTemp=[];
 
       function update(links, nodes, svg, colors, simulation) {
@@ -2193,6 +2218,7 @@
 		  })
           .style("fill", '#ad9ee3')
 		  .attr('clickhist',0)
+		  .attr('clicked', false)
         .on("mouseover", graphhover)
 		.on("mouseout",graphout)
 		.on("mouseup",graphClick);
@@ -2222,7 +2248,7 @@
             let ele = $event.target;      
             let name = event.target.getAttribute('data-name');
 			let nameid = event.target.getAttribute('personsid');
-			
+			let clicked = event.target.getAttribute('clicked');
 			domRect = ele.getBoundingClientRect();
 			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
 			let y1Loc = domRect.y+5;
@@ -2260,12 +2286,10 @@
 			  
 			document.querySelectorAll('.link-newgm').forEach(ele => {
               if(ele.getAttribute('ele') == nameid){
-				  //graphclickon = true;
 				  ele.remove();
 			  }});
 			document.querySelectorAll('.link-newgo').forEach(ele => {
               if(ele.getAttribute('ele') == nameid){
-				  //graphclickon = true;
 				  ele.remove();
 			  }});
 
@@ -2275,14 +2299,13 @@
 
 			   }
 
-			if(graphclickon == false){
+			if(clicked == "false"){
 			let loc = [],org = [];
 
 			for(var i =0;i<ids.length;i++)
 			{
 				let loc = ids[i].location;
 				let org = ids[i].organization;
-				console.log(loc)
 				if(document.querySelector('.right .bubblemap-box').style.display == 'block')
 				{
 				for(var j=0;j<loc.length;j++)
@@ -2314,6 +2337,8 @@
 			d3.select(this).attr("r", function(d){ return 15 })
 			hist = parseInt(event.target.getAttribute('clickhist'))+1
 			event.target.setAttribute('clickhist', hist)
+			event.target.setAttribute('clicked', true)
+
 			drawPolyLineGraph(GraphToMapCollection);
 			}
 			
@@ -2348,13 +2373,15 @@
 				d3.select(this).attr("r", function(d){ return 15 })
 				hist = parseInt(event.target.getAttribute('clickhist'))+1
 				event.target.setAttribute('clickhist', hist)
+				event.target.setAttribute('clicked', true)
+
 				drawPolyLineGraph(GraphToOrgCollection);
 			}
 			}			
 			
 		  }
 		  else{
-				graphclickon = false;
+				event.target.setAttribute('clicked', false)
 			}
 		  }
 	
@@ -2468,11 +2495,22 @@
             let ele = $event.target;      
  			let nameid = event.target.getAttribute('personsid');
 			let name = event.target.getAttribute('data-name');
+			let clicked = event.target.getAttribute('clicked');
+
 			
 			domRect = ele.getBoundingClientRect();
 			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
 			let y1Loc = domRect.y+5;
 			
+			clearTimeout(timeout2);
+			tooltip2
+			.style("left", d3.event.pageX -document.getElementById('leftplace').offsetWidth-750 + "px")
+            .style("top", d3.event.pageY + "px")
+            .style("display", "inline-block")
+            .html(name);
+			
+			if(clicked != "true")
+			{
 			let ids = []
 
 			for(var val in documentData){
@@ -2549,10 +2587,14 @@
 			drawPolyLineGraphTemp(GraphCollectionTemp);
 			}
 			}
+			}
       }
 
       	function graphout(){
-		GraphCollectionTemp = [],
+		GraphCollectionTemp = [];
+		
+		timeout2 = setTimeout(function(d){tooltip2.style("display", "none");},1000)
+
 		document.querySelectorAll('.link-newgtemp').forEach(ele => {
               ele.remove();
             });
@@ -2662,15 +2704,19 @@
 
 
 	  function ClusterGMdata() {
+		  	
+	if(ClusterGMdetail==false){
+		
+	var margin = {top: 10, right: 30, bottom: 30, left: 60},
+		width = 460 - margin.left - margin.right,
+		height = 400 - margin.top - margin.bottom;
 		  
-var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-		  
-		 body = d3.select(".clusterGM-data-box")
+		 body = d3.select(".clusterGM-data-box").style("width", '300px').style("height",'300px')
 				.classed("svg-container", true);
 				
-		 var svg = body.append("svg").attr("preserveAspectRatio", "xMinYMin meet")
+		d3.select("#svgclustergm").remove();
+
+		 var svg = body.append("svg").attr("preserveAspectRatio", "xMinYMin meet").attr("id","svgclustergm")
 									.attr("viewBox", "0 0 450 450")
 	.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
@@ -2704,12 +2750,98 @@ svg.selectAll(".dot")
 	  .attr('clustergmid',function(d,i){return (i+1);})
 	  .style("fill", '#ad9ee3')
 	  .attr("clickhist",0)
+	  .attr('clicked',false)
       .on("mouseover", ClusterGMhover)
 	  .on("mouseout",ClusterGMout)
 	  .on("mouseup",ClusterGMclick);
 						  
         });
+	}
+	else
+	{
+		var margin = {top: 30, right: 30, bottom: 30, left: -50},
+		width = 1400 - margin.left - margin.right,
+		height = 1000 - margin.top - margin.bottom;
+			  
+			 body = d3.select(".clusterGM-data-box").style("width", '450px').style("height",'450px')
+					.classed("svg-container", true);
+					
+			d3.select("#svgclustergm").remove();
+
+					
+			 var svg = body.append("svg").attr("preserveAspectRatio", "xMinYMin meet").attr("id","svgclustergm")
+										.attr("viewBox", "0 0 1600 1600").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+
+	var xValue = function(d) { return d.x;},
+	  x = d3.scaleLinear()
+		.range([ -100, width ]),
+		xMap = function(d) { return x(xValue(d))+10;};
+
+	var yValue = function(d) { return d["y"];},
+	   y = d3.scaleLinear()
+		.range([ height+800, 0]),
 		
+		yMap = function(d) { return y(yValue(d))+50;};
+		yMap0 = function(d) { return y(yValue(d))+40;};
+
+	  d3.csv("perxloc.csv", function(data){
+	  
+	  x.domain([d3.min(data, xValue)-1.2, d3.max(data, xValue)+1]);
+	  y.domain([d3.min(data, yValue)-1.2, d3.max(data, yValue)+1]);
+	 
+	 	svg.selectAll(".recta")
+		  .data(data)
+		.enter().append("rect")
+		  .attr("class", "recta")
+		  .attr('width', function(d){return d['person'].length*1.5+20;})
+		  .attr('height', 40)
+		  .attr("x", function(d) { return x(xValue(d))+((d['map'].length*1.5+90+d['person'].length*1.5)/2)-(d['person'].length*1.5+20);})
+		  .attr("y", yMap)
+		  .style("fill", '#ad9ee3')
+		   .attr('stroke', '#000000')
+			.attr('stroke-width', '2')
+		  .attr('person',function(d){return d['person'];})
+		  .attr('clustergmmid',function(d,i){return (i+1);});
+
+	svg.selectAll(".rectb")
+		  .data(data)
+		.enter().append("rect")
+		  .attr("class", "rectb")
+		  .attr('width', function(d){return d['map'].length*1.5+20;})
+		  .attr('height', 40)
+		  .attr("x", function(d) { return x(xValue(d))+((d['map'].length*1.5+90+d['person'].length*1.5)/2)+10;})
+		  .attr("y", yMap)
+		.style("fill", '#add8e6')
+				   .attr('stroke', '#000000')
+			.attr('stroke-width', '2')
+		  .attr('map',function(d){return d['map'];})
+		  	  .attr('clustergmgid',function(d,i){return (i+1);});
+	 
+	svg.selectAll(".rectc")
+			.data(data)
+			.enter()
+			.append("rect")
+			.attr('width', function(d){return (d['map'].length*1.5)+(d['person'].length*1.5)+100;})
+		  .attr('height', 60)
+		  .attr("x", xMap)
+		  .attr("y", yMap0)
+		  .style("fill", '#ffffff')
+		   .attr('stroke', '#000000 ')
+	       .attr("fill-opacity", 0)
+		  .attr('stroke-width', '2')
+		  .attr("stroke-opacity","0.5")
+		  .attr('map',function(d){return d['map'];})
+		  .attr('person',function(d){return d['person'];})
+		  .attr("clickhist",0)
+		  .attr('clicked',false)
+		  .attr('clustergmid',function(d,i){return (i+1);})	
+		  .on("mouseover", ClusterGMhover)
+		  .on("mouseout",ClusterGMout)
+		  .on('mouseup',ClusterGMclick);		  
+			});			
+	}
+	
 $('.clusterGM-data-box').on('drag', reDrawLines);
 	$("#movefixGM").on("change", function(e){
 		if(document.getElementById("movefixGM").checked){
@@ -2723,7 +2855,7 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
       }
 	  
 	let ClusterGMToGraph=[],ClusterGMToMap=[],ClusterGMToTextCollection=[],connections4cg =[],connections4cm=[],connections4ct=[],
-	ClusterGMTempCollection=[],clusterGMclickon=false;
+	ClusterGMTempCollection=[],ClusterGMdetail=false;
 
 	function ClusterGMclick(){
 		  if(window.getSelection) {
@@ -2733,21 +2865,35 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			let persons = ele.getAttribute('person');
 			let locs = ele.getAttribute('map');
 			let nameid = ele.getAttribute('clustergmid');
-			
+			let clicked = ele.getAttribute('clicked');
+
 			domRect = ele.getBoundingClientRect();
-			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
+		  
+			if(ClusterGMdetail==false)
+			{
+			var x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
+			}
+			else
+			{
+				var x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+15;
+			}			
 			let y1Loc = domRect.y+5;
 		  
 		  if(event.button === 2) {
 
 			const rightCustomMenu = document.querySelector('.svg-custom-menu');
-
-            rightCustomMenu.innerHTML = `<li class="svg-menu-item-${nameid} svg-menu-item">Show Relevant Text</li>`
+			if(ClusterGMdetail == false)
+			{
+            rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li>`
+            }
+			else{
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li>`
+			}
             rightCustomMenu.style.display = 'block';
             rightCustomMenu.style.left = event.clientX + 'px';
             rightCustomMenu.style.top = event.clientY + 'px';
 						
-			document.querySelector(`.svg-menu-item-${nameid}`).addEventListener('click', function(e) {
+			document.querySelector(`.svg-menu-item0-${nameid}`).addEventListener('click', function(e) {
             document.querySelector('.svg-custom-menu').style.display = 'none';
 			let docids = [], locats=[], perso=[];
 
@@ -2873,6 +3019,20 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 				}
 			//console.log(docids)
 			})
+			
+			document.querySelector(`.svg-menu-item1-${nameid}`).addEventListener('click', function(e) {
+				
+				document.querySelector('.svg-custom-menu').style.display = 'none';
+				if(ClusterGMdetail == false)
+				{ClusterGMdetail = true;}
+				else
+				{
+					ClusterGMdetail = false;
+				}
+				ClusterGMdata();
+
+		  })
+			
 		  }
 		else
 			{
@@ -2898,12 +3058,10 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			  
 			document.querySelectorAll('.link-newcgmg').forEach(ele => {
               if(ele.getAttribute('ele') == nameid){
-				  //clusterGMclickon = true;
 				  ele.remove();
 			  }});
 			document.querySelectorAll('.link-newcgmm').forEach(ele => {
               if(ele.getAttribute('ele') == nameid){
-				  //clusterGMclickon = true;
 				  ele.remove();
 			  }});
 			
@@ -2913,7 +3071,7 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 
 			   }
 			
-			if(clusterGMclickon==false){
+			if(clicked== "false"){
 			for(var j = 0; j<persons.split(',').length;j++)
 			{
 			person = persons.split(',')[j];
@@ -2944,6 +3102,8 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			d3.select(this).attr("r", function(d){ return 15 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);
+
 			drawPolyLineClusterGM(ClusterGMToGraph);
 			}
 			}
@@ -2976,11 +3136,14 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			clusterGMclickon = true;
 			d3.select(this).attr("r", function(d){ return 15 })
 			hist = parseInt(event.target.getAttribute('clickhist'))+1
-			event.target.setAttribute('clickhist', hist)
+			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);
+
 			drawPolyLineClusterGM(ClusterGMToMap);
 			}
 			}}
-			else{clusterGMclickon=false}
+			else{event.target.setAttribute('clicked', false);
+				}
 			}
             }}
 		
@@ -2991,7 +3154,10 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			let persons = ele.getAttribute('person');
 			let locs = ele.getAttribute('map');
 			let nameid = ele.getAttribute('clustergmid');
+			let clicked = event.target.getAttribute('clicked');
 			
+			if(clicked != "true")
+			{
 			domRect = ele.getBoundingClientRect();
 			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
 			let y1Loc = domRect.y+5;
@@ -3047,6 +3213,7 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			d3.select(this).attr("r", function(d){ return 15 })}
 			drawPolyLineClusterGM(ClusterGMTempCollection);
 			}
+			}
 
     function ClusterGMout(){
 		ClusterGMTempCollection = [],
@@ -3060,16 +3227,21 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 	  		
 	  
 	function ClusterGOdata() {
-		  
+	
+	if(ClusterGOdetail==false){
+	
 	var margin = {top: 10, right: 30, bottom: 30, left: 60},
 		width = 460 - margin.left - margin.right,
 		height = 400 - margin.top - margin.bottom;
 			  
-			 body = d3.select(".clusterGO-data-box")
+			 body = d3.select(".clusterGO-data-box").style("width", '300px').style("height",'300px')
 					.classed("svg-container", true);
+				
+				d3.select("#svgclustergo").remove();
+
 					
-			 var svg = body.append("svg").attr("preserveAspectRatio", "xMinYMin meet")
-										.attr("viewBox", "0 0 450 450")
+			 var svg = body.append("svg").attr("preserveAspectRatio", "xMinYMin meet").attr("id","svgclustergo")
+										.attr("viewBox", "0 0 450 450") 
 		.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
 	var xValue = function(d) { return d.x;},
@@ -3101,11 +3273,98 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 		  .style("fill", '#ad9ee3')
 		  .attr("clickhist",0)
 		  .attr('clustergoid',function(d,i){return (i+1);})
+		  .attr('clicked',false)
 		  .on("mouseover", ClusterGOhover)
 		  .on("mouseout",ClusterGOout)
 	      .on('mouseup',ClusterGOclick);		  
 			});
-			
+	}
+	else{
+		var margin = {top: 20, right: 30, bottom: 30, left: -50},
+		width = 1400 - margin.left - margin.right,
+		height = 1000 - margin.top - margin.bottom;
+			  
+			 body = d3.select(".clusterGO-data-box").style("width", '450px').style("height",'450px')
+					.classed("svg-container", true);
+					
+			d3.select("#svgclustergo").remove();
+
+					
+			 var svg = body.append("svg").attr("preserveAspectRatio", "xMinYMin meet").attr("id","svgclustergo")
+										.attr("viewBox", "0 0 1600 1600").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+
+	var xValue = function(d) { return d.x;},
+	  x = d3.scaleLinear()
+		.range([ -100, width ]),
+		xMap = function(d) { return x(xValue(d))+10;};
+
+	var yValue = function(d) { return d["y"];},
+	   y = d3.scaleLinear()
+		.range([ height+800, 0]),
+		
+		yMap = function(d) { return y(yValue(d))+50;};
+		yMap0 = function(d) { return y(yValue(d))+40;};
+
+	  d3.csv("perxorg.csv", function(data){
+	  
+	  x.domain([d3.min(data, xValue)-1.2, d3.max(data, xValue)+1]);
+	  y.domain([d3.min(data, yValue)-1.2, d3.max(data, yValue)+1]);
+	 
+	 	svg.selectAll(".recta")
+		  .data(data)
+		.enter().append("rect")
+		  .attr("class", "recta")
+		  .attr('width', function(d){return d['organize'].length*1.5+20;})
+		  .attr('height', 40)
+		  .attr("x", function(d) { return x(xValue(d))+((d['person'].length*1.5+90+d['organize'].length*1.5)/2)-(d['organize'].length*1.5+20);})
+		  .attr("y", yMap)
+		  .style("fill", '#ad9ee3')
+		   .attr('stroke', '#000000')
+			.attr('stroke-width', '2')
+		  .attr('org',function(d){return d['organize'];})
+		  .attr('clustergooid',function(d,i){return (i+1);});
+
+	svg.selectAll(".rectb")
+		  .data(data)
+		.enter().append("rect")
+		  .attr("class", "rectb")
+		  .attr('width', function(d){return d['person'].length*1.5+20;})
+		  .attr('height', 40)
+		  .attr("x", function(d) { return x(xValue(d))+((d['person'].length*1.5+90+d['organize'].length*1.5)/2)+10;})
+		  .attr("y", yMap)
+		.style("fill", '#add8e6')
+				   .attr('stroke', '#000000')
+			.attr('stroke-width', '2')
+		  .attr('person',function(d){return d['person'];})
+		  	  .attr('clustergogid',function(d,i){return (i+1);});
+	 
+	svg.selectAll(".rectc")
+			.data(data)
+			.enter()
+			.append("rect")
+			.attr('width', function(d){return (d['person'].length*1.5)+(d['organize'].length*1.5)+100;})
+		  .attr('height', 60)
+		  .attr("x", xMap)
+		  .attr("y", yMap0)
+		  .style("fill", '#ffffff')
+		   .attr('stroke', '#000000 ')
+	       .attr("fill-opacity", 0)
+		  .attr('stroke-width', '2')
+		  .attr("stroke-opacity","0.5")
+		  .attr('org',function(d){return d['organize'];})
+		  .attr('person',function(d){return d['person'];})
+		  .attr("clickhist",0)
+		  .attr('clicked',false)
+		  .attr('clustergoid',function(d,i){return (i+1);})	
+		  .on("mouseover", ClusterGOhover)
+		  .on("mouseout",ClusterGOout)
+		  .on('mouseup',ClusterGOclick);		  
+			});			
+		
+	}
+	
+	
 	$('.clusterGO-data-box').on('drag', reDrawLines);
 	$("#movefixGO").on("change", function(e){
 		if(document.getElementById("movefixGO").checked){
@@ -3118,7 +3377,7 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 	}
 	  	  
 	let ClusterGOToGraph=[],ClusterGOToOrg=[],ClusterGOToTextCollection=[],connections5cg =[],connections5co=[],connections5ct=[],
-	ClusterGOTempCollection=[],clusterGOclickon=false;
+	ClusterGOTempCollection=[],ClusterGOdetail=false;
 
 	function ClusterGOclick(){
 	if(window.getSelection) {
@@ -3128,20 +3387,36 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			let persons = ele.getAttribute('person');
 			let orgs = ele.getAttribute('org');
 			let nameid = ele.getAttribute('clustergoid');
+			let clicked = ele.getAttribute('clicked');
+
 			
 			domRect = ele.getBoundingClientRect();
-			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
+			if(ClusterGOdetail==false)
+			{
+			var x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
+			}
+			else
+			{
+				var x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+15;
+			}			
 			let y1Loc = domRect.y+5;
+		  
 		  if(event.button === 2) {
 
 			const rightCustomMenu = document.querySelector('.svg-custom-menu');
-
-            rightCustomMenu.innerHTML = `<li class="svg-menu-item-${nameid} svg-menu-item">Show Relevant Text</li>`
+			if(ClusterGOdetail == false)
+			{
+            rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li>`
+            }
+			else{
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li>`
+			}
+			
             rightCustomMenu.style.display = 'block';
             rightCustomMenu.style.left = event.clientX + 'px';
             rightCustomMenu.style.top = event.clientY + 'px';
 			
-			document.querySelector(`.svg-menu-item-${nameid}`).addEventListener('click', function(e) {
+			document.querySelector(`.svg-menu-item0-${nameid}`).addEventListener('click', function(e) {
             document.querySelector('.svg-custom-menu').style.display = 'none';
 			let docids = [], organ=[], perso=[];
 			for(var j = 0; j<persons.split(',').length;j++)
@@ -3269,7 +3544,21 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
                   });
 				  drawPolyLineClusterGO(ClusterGOToTextCollection);
 				  }
-			})}	
+			})
+						
+			document.querySelector(`.svg-menu-item1-${nameid}`).addEventListener('click', function(e) {
+				
+				document.querySelector('.svg-custom-menu').style.display = 'none';
+				if(ClusterGOdetail == false)
+				{ClusterGOdetail = true;}
+				else
+				{
+					ClusterGOdetail = false;
+				}
+				ClusterGOdata();
+
+		  })
+			}	
 
 		else
 			{
@@ -3295,12 +3584,10 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			  
 			document.querySelectorAll('.link-newcgog').forEach(ele => {
               if(ele.getAttribute('ele') == nameid){
-				  //clusterGOclickon = true;
 				  ele.remove();
 			  }});
 			document.querySelectorAll('.link-newcgoo').forEach(ele => {
               if(ele.getAttribute('ele') == nameid){
-				  //clusterGOclickon = true;
 				  ele.remove();
 			  }});
 			
@@ -3309,7 +3596,7 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 				  d3.select(this).style("fill", "#d5212e");
 
 			   }
-			if(clusterGOclickon==false){
+			if(clicked=="false"){
 			for(var j = 0; j<persons.split(',').length;j++)
 			{
 			person = persons.split(',')[j];
@@ -3340,6 +3627,7 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			d3.select(this).attr("r", function(d){ return 15 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);
 			drawPolyLineClusterGO(ClusterGOToGraph);
 			}}
 			
@@ -3372,10 +3660,12 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			clusterGOclickon = true;
 			d3.select(this).attr("r", function(d){ return 15 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
+			event.target.setAttribute('clicked', true);			
 			event.target.setAttribute('clickhist', hist);
 			drawPolyLineClusterGO(ClusterGOToOrg);
 			}}}
-			else{clusterGOclickon=false}
+			else{event.target.setAttribute('clicked', false);
+}
 			}
             }}
 	
@@ -3386,7 +3676,10 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			let persons = ele.getAttribute('person');
 			let orgs = ele.getAttribute('org');
 			let nameid = ele.getAttribute('clustergoid');
+			let clicked = event.target.getAttribute('clicked');
 			
+			if(clicked != "true")
+			{
 			domRect = ele.getBoundingClientRect();
 			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
 			let y1Loc = domRect.y+5;
@@ -3442,7 +3735,9 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			d3.select(this).style("fill", "#485D5E");
 			d3.select(this).attr("r", function(d){ return 15 })}
 			drawPolyLineClusterGO(ClusterGOTempCollection);
-		}}}
+		}}
+			}
+		}
 
     function ClusterGOout(){
 		ClusterGOTempCollection = [],
@@ -3455,35 +3750,87 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 	}
 	  		
 	let ClusterOMToOrg=[],ClusterOMToMap=[],ClusterOMToTextCollection=[],connections6co =[],connections6cm=[],connections6ct=[],
-	ClusterOMTempCollection=[],clusterOMclickon=false;
+	ClusterOMTempCollection=[],ClusterOMdetail=false;
 	
 	function ClusterOMdata() {
-		  
-	var margin = {top: 30, right: 30, bottom: 30, left: 30},
+		
+		if(ClusterOMdetail==false){
+			
+var margin = {top: 10, right: 30, bottom: 30, left: 60},
+		width = 460 - margin.left - margin.right,
+		height = 400 - margin.top - margin.bottom;
+			  
+			 body = d3.select(".clusterOM-data-box").style("width", '300px').style("height",'300px')
+					.classed("svg-container", true);
+								d3.select("#svgclusterom").remove();
+
+			 var svg = body.append("svg").attr("preserveAspectRatio", "xMinYMin meet").attr("id","svgclusterom")
+										.attr("viewBox", "0 0 450 450")
+		.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+	var xValue = function(d) { return d.x;},
+	  x = d3.scaleLinear()
+		.range([ 0, width ]),
+		xMap = function(d) { return x(xValue(d))-50;};
+	  
+
+	var yValue = function(d) { return d["y"];},
+	   y = d3.scaleLinear()
+		.range([ height, 0]),
+		yMap = function(d) { return y(yValue(d))+50;};
+
+
+	  d3.csv("locxorg.csv", function(data){
+	  
+	  x.domain([d3.min(data, xValue)-1.2, d3.max(data, xValue)+1]);
+	  y.domain([d3.min(data, yValue)-1.2, d3.max(data, yValue)+1]);
+	 
+
+	svg.selectAll(".dot")
+		  .data(data)
+		.enter().append("circle")
+		  .attr("class", "dot")
+		  .attr("r", 10)
+		  .attr("cx", xMap)
+		  .attr("cy", yMap)
+		  .attr('map',function(d){return d['map'];})
+		  .attr('org',function(d){return d['organize'];})
+		  .style("fill", '#ad9ee3')
+		  .attr("clickhist",0)
+		  .attr('clicked',false)
+		  .attr('clusteromid',function(d,i){return (i+1);})
+		  .on("mouseover", ClusterOMhover)
+		  .on("mouseout",ClusterOMout)
+		  .on('mouseup',ClusterOMclick);		  		  
+			});
+		}
+	else{
+		var margin = {top: 30, right: 30, bottom: 30, left: 0},
 		width = 1400 - margin.left - margin.right,
 		height = 1000 - margin.top - margin.bottom;
 			  
-			 body = d3.select(".clusterOM-data-box")
+			 body = d3.select(".clusterOM-data-box").style("width", '450px').style("height",'450px')
 					.classed("svg-container", true);
+					
+			d3.select("#svgclusterom").remove();
+
 					
 			 var svg = body.append("svg").attr("preserveAspectRatio", "xMinYMin meet").attr("id","svgclusterom")
 										.attr("viewBox", "0 0 1600 1600").attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
+
 	var xValue = function(d) { return d.x;},
 	  x = d3.scaleLinear()
 		.range([ -100, width ]),
-		xMap0 = function(d) { return x(xValue(d))-65;};
-		xMap = function(d) { return x(xValue(d))-50;};
-	  
-		xMap2 = function(d) { return x(xValue(d))+25;};
+		xMap = function(d) { return x(xValue(d))+10;};
 
 	var yValue = function(d) { return d["y"];},
 	   y = d3.scaleLinear()
 		.range([ height+800, 0]),
-		yMap0 = function(d) { return y(yValue(d))+40;};
+		
 		yMap = function(d) { return y(yValue(d))+50;};
+		yMap0 = function(d) { return y(yValue(d))+40;};
 
-		yMap2 = function(d) { return y(yValue(d))+50;};
 	  d3.csv("locxorg.csv", function(data){
 	  
 	  x.domain([d3.min(data, xValue)-1.2, d3.max(data, xValue)+1]);
@@ -3493,37 +3840,37 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 		  .data(data)
 		.enter().append("rect")
 		  .attr("class", "recta")
-		  .attr('width', function(d){return d['organize'].length+30;})
+		  .attr('width', function(d){return d['organize'].length*1.5+20;})
 		  .attr('height', 40)
-		  .attr("x", xMap)
+		  .attr("x", function(d) { return x(xValue(d))+((d['map'].length*1.5+90+d['organize'].length*1.5)/2)-(d['organize'].length*1.5+20);})
 		  .attr("y", yMap)
 		  .style("fill", '#ad9ee3')
 		   .attr('stroke', '#000000')
 			.attr('stroke-width', '2')
-		  .attr('map',function(d){return d['organize'];})
+		  .attr('org',function(d){return d['organize'];})
 		  .attr('clusteromoid',function(d,i){return (i+1);});
 
 	svg.selectAll(".rectb")
 		  .data(data)
 		.enter().append("rect")
 		  .attr("class", "rectb")
-		  .attr('width', function(d){return d['map'].length+30;})
+		  .attr('width', function(d){return d['map'].length*1.5+20;})
 		  .attr('height', 40)
-		  .attr("x", xMap2)
-		  .attr("y", yMap2)
+		  .attr("x", function(d) { return x(xValue(d))+((d['map'].length*1.5+90+d['organize'].length*1.5)/2)+10;})
+		  .attr("y", yMap)
 		.style("fill", '#add8e6')
 				   .attr('stroke', '#000000')
 			.attr('stroke-width', '2')
-		  .attr('org',function(d){return d['map'];})
+		  .attr('map',function(d){return d['map'];})
 		  	  .attr('clusterommid',function(d,i){return (i+1);});
 	 
-			svg.selectAll(".rectc")
-				.data(data)
+	svg.selectAll(".rectc")
+			.data(data)
 			.enter()
 			.append("rect")
-			.attr('width', 160)
+			.attr('width', function(d){return (d['map'].length*1.5)+(d['organize'].length*1.5)+100;})
 		  .attr('height', 60)
-		  .attr("x", xMap0)
+		  .attr("x", xMap)
 		  .attr("y", yMap0)
 		  .style("fill", '#ffffff')
 		   .attr('stroke', '#000000 ')
@@ -3533,11 +3880,14 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 		  .attr('map',function(d){return d['map'];})
 		  .attr('org',function(d){return d['organize'];})
 		  .attr("clickhist",0)
-	  .attr('clusteromid',function(d,i){return (i+1);})
+		  .attr('clicked',false)
+		  .attr('clusteromid',function(d,i){return (i+1);})	
 		  .on("mouseover", ClusterOMhover)
 		  .on("mouseout",ClusterOMout)
 		  .on('mouseup',ClusterOMclick);		  
-			});
+			});			
+		
+	}
 			
 	$('.clusterOM-data-box').on('drag', reDrawLines);
 	$("#movefixOM").on("change", function(e){
@@ -3558,21 +3908,34 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			let orgs = ele.getAttribute('org');
 			let locs = ele.getAttribute('map');
 			let nameid = ele.getAttribute('clusteromid');
-			
+			let clicked = ele.getAttribute('clicked');
+		
 			domRect = ele.getBoundingClientRect();
-			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
-			let y1Loc = domRect.y+5;
+			if(ClusterOMdetail==false)
+			{
+			var x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
+			}
+			else
+			{
+				var x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+15;
+			}			let y1Loc = domRect.y+5;
 		  
 		  if(event.button === 2) {
 
 			const rightCustomMenu = document.querySelector('.svg-custom-menu');
-
-            rightCustomMenu.innerHTML = `<li class="svg-menu-item-${nameid} svg-menu-item">Show Relevant Text</li>`
-            rightCustomMenu.style.display = 'block';
+			if(ClusterOMdetail == false)
+			{
+            rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li>`
+            }
+			else{
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li>`
+			}
+			rightCustomMenu.style.display = 'block';
             rightCustomMenu.style.left = event.clientX + 'px';
             rightCustomMenu.style.top = event.clientY + 'px';
 			
-			document.querySelector(`.svg-menu-item-${nameid}`).addEventListener('click', function(e) {
+			
+			document.querySelector(`.svg-menu-item0-${nameid}`).addEventListener('click', function(e) {
             document.querySelector('.svg-custom-menu').style.display = 'none';
 			let docids = [], organ=[], locats=[];
 			
@@ -3701,8 +4064,25 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 				  drawPolyLineClusterOM(ClusterOMToTextCollection);
 
 				  }
-			})}
+			})
 				
+				
+			
+			document.querySelector(`.svg-menu-item1-${nameid}`).addEventListener('click', function(e) {
+				
+				document.querySelector('.svg-custom-menu').style.display = 'none';
+				if(ClusterOMdetail == false)
+				{ClusterOMdetail = true;}
+				else
+				{
+					ClusterOMdetail = false;
+				}
+				ClusterOMdata();
+
+		  })
+		  
+		  }
+	
 		else
 			{
 			for (var i = ClusterOMToOrg.length - 1; i >= 0; --i) {
@@ -3727,12 +4107,10 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			  
 			document.querySelectorAll('.link-newcomm').forEach(ele => {
               if(ele.getAttribute('ele') == nameid){
-				  //clusterOMclickon = true;
 				  ele.remove();
 			  }});
 			document.querySelectorAll('.link-newcomo').forEach(ele => {
               if(ele.getAttribute('ele') == nameid){
-				  //clusterOMclickon = true;
 				  ele.remove();
 			  }});
 			
@@ -3742,7 +4120,7 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 
 			   }
 			
-			if(clusterOMclickon==false){
+			if(clicked=="false"){
 			for(var j = 0; j<locs.split(',').length;j++)
 			{
 			loc = locs.split(',')[j];
@@ -3772,6 +4150,8 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			d3.select(this).attr("r", function(d){ return 15 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);
+
 			drawPolyLineClusterOM(ClusterOMToMap);
 			}}
 			for(var j = 0; j<orgs.split(',').length;j++)
@@ -3805,22 +4185,34 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			d3.select(this).attr("r", function(d){ return 15 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);			
 			drawPolyLineClusterOM(ClusterOMToOrg);
 			}}}
-			else{clusterOMclickon=false}
+			else{event.target.setAttribute('clicked', false);
+}
 			}
             }}
 
-function ClusterOMhover() {
+	function ClusterOMhover() {
 			
 		    let $event = event;
             let ele = $event.target;
 			let locs = ele.getAttribute('map');
 			let orgs = ele.getAttribute('org');
 			let nameid = ele.getAttribute('clusteromid');
+			let clicked = event.target.getAttribute('clicked');
 			
+			if(clicked != "true")
+			{
 			domRect = ele.getBoundingClientRect();
-			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
+			if(ClusterOMdetail==false)
+			{
+			var x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
+			}
+			else
+			{
+				var x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+15;
+			}
 			let y1Loc = domRect.y+5;
 			
 			for(var j = 0; j<locs.split(',').length;j++)
@@ -3879,16 +4271,7 @@ function ClusterOMhover() {
 			d3.select(this).attr("r", function(d){ return 15 })}
 			drawPolyLineClusterOM(ClusterOMTempCollection);
 		}}
-		
-		var svg = d3.select("#svgclusterom");
-
-		svg.append("path")
-			  .attr("d","M 1140 836 Q 1140 524.116116646641 666.798713181312 524.116116646641 M 1060 840 Q 666 840.116116646641 666.798713181312 524.116116646641 M 340 260 C 503 260 503 524 666.116116646641 524.798713181312")
-			  //.attr("d","M 1040.798713181312 826.116116646641 C 719.604 826.116116646641 719.604 243.2472809151684 398.41000833109484 243.2472809151684")
-			  .attr("fill", "none")
-			  .attr("stroke-width","2")
-				.attr('stroke', '#000000 ');
-		
+			}
 		}
 
 
@@ -3963,6 +4346,7 @@ data.sort(function(a, b) {
 		  .style("stroke-width",0.3)
 		  .style("stroke",'rgb(0,0,0)')
 		  .attr("clickhist",0)
+		  .attr('clicked',false)		  
 		  .attr('cx',0)
 		  .attr('cy',function(d){return y(d.organize);})
 		  .on("mouseover", organizehover)
@@ -4027,6 +4411,7 @@ function change() {
             let ele = $event.target;      
             let orgname = event.target.getAttribute('orgname');
 			let orgid = event.target.getAttribute('barid');
+			let clicked = ele.getAttribute('clicked');
 			
 			domRect = ele.getBoundingClientRect();
 			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
@@ -4154,12 +4539,10 @@ function change() {
 			  
 			document.querySelectorAll('.link-newog').forEach(ele => {
               if(ele.getAttribute('ele') == orgid){
-				  //orgclickon = true;
 				  ele.remove();
 			  }});
 			document.querySelectorAll('.link-newom').forEach(ele => {
               if(ele.getAttribute('ele') == orgid){
-				  //orgclickon = true;
 				  ele.remove();
 			  }});
 
@@ -4168,7 +4551,7 @@ function change() {
 				  d3.select(this).style("fill", "#d5212e");
 
 			   }
-			if(orgclickon == false){
+			if(clicked == "false"){
 			let loc = [],names = [];
 			for(var i =0;i<ids.length;i++)
 			{
@@ -4205,6 +4588,7 @@ function change() {
 				orgclickon = true;
 				hist = parseInt(event.target.getAttribute('clickhist'))+1;
 				event.target.setAttribute('clickhist', hist);
+				event.target.setAttribute('clicked', true);
 				d3.select(this).style("stroke-width", 1);
 				drawPolyLineOrg(OrgToGraphCollection);
 
@@ -4238,6 +4622,7 @@ function change() {
 			orgclickon = true;
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);			
 			d3.select(this).style("stroke-width", 1);
 			drawPolyLineOrg(OrgToMapCollection);
 			}
@@ -4245,7 +4630,7 @@ function change() {
 			}
 			
 			else{
-				orgclickon = false;
+					event.target.setAttribute('clicked', false);
 			}}
 			
 			}}
@@ -4256,7 +4641,10 @@ function change() {
             let ele = $event.target;      
             let orgname = event.target.getAttribute('orgname');
 			let orgid = event.target.getAttribute('barid');
+			let clicked = event.target.getAttribute('clicked');
 			
+			if(clicked != "true")
+			{
 			domRect = ele.getBoundingClientRect();
 			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;;
 			let y1Loc = domRect.y+5;
@@ -4335,6 +4723,7 @@ function change() {
 			drawPolyLineOrgTemp(OrgCollectionTemp);
 			}
 			}
+			}
       }
 
       	function organizeout(){
@@ -4349,7 +4738,7 @@ function change() {
 	}
 
 let ClusterChainTempCollection = [],ClusterChainToGraph=[],ClusterChainToMap=[],ClusterChainToOrg=[],ClusterChainToGM=[],ClusterChainToOM=[],ClusterChainToGO=[]
-connections7cg=[],connections7cm=[],connections7co=[],connections7cgm=[],connections7cgo=[],connections7com=[],clusterChainclickon=false;
+connections7cg=[],connections7cm=[],connections7co=[],connections7cgm=[],connections7cgo=[],connections7com=[],ClusterChaindetail=false;
 
 
 	function ClusterChain(){
@@ -4467,6 +4856,7 @@ svg.selectAll(".dot")
 	  .style("fill", '#ad9ee3')
 	  .style("stroke", "black")
 	  .attr("clickhist",0)
+	  .attr("clicked", false)
       .on("mouseover", ClusterChainhover)
 	  .on("mouseout",ClusterChainout)
 	  .on("mouseup",ClusterChainclick);
@@ -4726,7 +5116,8 @@ function ClusterChainhover() {
 			let orgs = ele.getAttribute('organize');
 			let persons = ele.getAttribute('person');
 			let nameid = ele.getAttribute('clusterchainid');
-			
+			let clicked = ele.getAttribute('clicked');
+
 			domRect = ele.getBoundingClientRect();
 			let x1Loc = domRect.x-document.getElementById('leftplace').offsetWidth+5;
 			let y1Loc = domRect.y+5;
@@ -4736,12 +5127,18 @@ function ClusterChainhover() {
 
 			const rightCustomMenu = document.querySelector('.svg-custom-menu');
 
-            rightCustomMenu.innerHTML = `<li class="svg-menu-item-${nameid} svg-menu-item">Show Relevant Text</li>`
+			if(ClusterChaindetail == false)
+			{
+            rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li>`
+            }
+			else{
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li>`
+			}
             rightCustomMenu.style.display = 'block';
             rightCustomMenu.style.left = event.clientX + 'px';
             rightCustomMenu.style.top = event.clientY + 'px';
 			
-			document.querySelector(`.svg-menu-item-${nameid}`).addEventListener('click', function(e) {
+			document.querySelector(`.svg-menu-item0-${nameid}`).addEventListener('click', function(e) {
             document.querySelector('.svg-custom-menu').style.display = 'none';
 			let docids = [], organ=[], locats=[];
 			
@@ -4818,7 +5215,20 @@ function ClusterChainhover() {
                   });
 				 
 				  }
-			})}
+			})
+		
+		document.querySelector(`.svg-menu-item1-${nameid}`).addEventListener('click', function(e) {
+				
+				document.querySelector('.svg-custom-menu').style.display = 'none';
+				if(ClusterChaindetail == false)
+				{ClusterChaindetail = true;}
+				else
+				{
+					ClusterChaindetail = false;
+				}
+
+		  })
+			}
 				
 		else
 			{
@@ -4913,7 +5323,7 @@ function ClusterChainhover() {
 
 			   }
 			
-			if(clusterChainclickon==false){
+			if(clicked=="false"){
 			
 			var clustergo = $("[clustergoid]")
 			var clustergm = $("[clustergmid]")
@@ -4970,10 +5380,10 @@ function ClusterChainhover() {
 				}
 			}
 			d3.select(this).style("fill", "#01579b");
-			clusterChainclickon = true;
 			d3.select(this).attr("r", function(d){ return 10 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);
 			drawPolyLineClusterChain(ClusterChainToGO);
 			}
 			
@@ -5027,10 +5437,10 @@ function ClusterChainhover() {
 				}
 			}
 			d3.select(this).style("fill", "#01579b");
-			clusterChainclickon = true;
 			d3.select(this).attr("r", function(d){ return 10 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);			
 			drawPolyLineClusterChain(ClusterChainToGM);
 			}
 			
@@ -5085,10 +5495,10 @@ function ClusterChainhover() {
 				}
 			}
 			d3.select(this).style("fill", "#01579b");
-			clusterChainclickon = true;
 			d3.select(this).attr("r", function(d){ return 10 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);
 			drawPolyLineClusterChain(ClusterChainToOM);
 			}
 			
@@ -5118,10 +5528,10 @@ function ClusterChainhover() {
 			connections7cm.push({ source: ele, target: bubble, boxElement: 'bubble-map' });
 			
 			d3.select(this).style("fill", "#01579b");
-			clusterChainclickon = true;
 			d3.select(this).attr("r", function(d){ return 10 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);
 			drawPolyLineClusterChain(ClusterChainToMap);
 			}}
 			for(var j = 0; j<orgs.split(',').length;j++)
@@ -5151,10 +5561,10 @@ function ClusterChainhover() {
 			connections7co.push({ source: ele, target: tar, boxElement: 'organize' });
 			
 			d3.select(this).style("fill", "#01579b");
-			clusterChainclickon = true;
 			d3.select(this).attr("r", function(d){ return 10 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);
 			drawPolyLineClusterChain(ClusterChainToOrg);
 			}}
 			
@@ -5184,14 +5594,14 @@ function ClusterChainhover() {
 			connections7cg.push({ source: ele, target: tar, boxElement: 'all-data-box' });
 			
 			d3.select(this).style("fill", "#01579b");
-			clusterChainclickon = true;
 			d3.select(this).attr("r", function(d){ return 10 });
 			hist = parseInt(event.target.getAttribute('clickhist'))+1;
 			event.target.setAttribute('clickhist', hist);
+			event.target.setAttribute('clicked', true);
 			drawPolyLineClusterChain(ClusterChainToGraph);
 			}}
 			}
-			else{clusterChainclickon=false}
+			else{event.target.setAttribute('clicked', false);}
 			}
             }}
 
@@ -5199,15 +5609,10 @@ function ClusterChainhover() {
 	}
 
 
-	
-
-
       const API_URL = 'http://localhost:3000/';
       $(document).ready(function() {
         checkForBubbleData();
-		
 
-		
         getDocumentData();
 		
         $('select').select2();
