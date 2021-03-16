@@ -61,7 +61,7 @@
       <g></g>
     </svg>
 	
-    <div class="right" id="board" style = "position:relative;">
+    <div class="right" id="board" style = "position:relative;background-color: #FFFFFF;">
 	
       <div class="all-data-box note the-node custom-data"  style ="left:750px;top:10px;" data-dialog="graph">
         <div class='close_note'>X</div>
@@ -3257,7 +3257,7 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
           let selection = window.getSelection();
 		    let $event = event;
             let ele = $event.target;
-			let nameid = ele.getAttribute('clustergmid');
+			var nameid = ele.getAttribute('clustergmid');
 			
 			var circele = document.getElementById("cgmcircid"+nameid);
 			var clicked = circele.getAttribute('clicked');
@@ -3308,7 +3308,7 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 						
 			document.querySelector(`.svg-menu-item0-${nameid}`).addEventListener('click', function(e) {
             document.querySelector('.svg-custom-menu').style.display = 'none';
-			let docids = [], locats=[], perso=[];
+			var docids = [], locats=[], perso=[];
 
 			for(var j = 0; j<persons.split(',').length;j++)
 			{
@@ -3318,13 +3318,15 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 				{
 						perso.push(sor);
 				}
-				
+			
+
 			for (var val in documentData){
 				if(documentData[val].name.includes(sor))
 				{
 					if(!(docids.includes(documentData[val])))
 						docids.push(documentData[val]);
 				}}
+				
 			
 			for(var i = 0; i<locs.split(',').length;i++)
 			{
@@ -3347,6 +3349,10 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 					docids.splice(val,1)
 			}
 			}
+			console.log(docids);
+			if(nameid=="9")docids.pop();
+
+			
 			for (var val in docids){	
 					let content = docids[val].docText;
 					let sid = docids[val].docId;
@@ -3362,6 +3368,16 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 						if(docids[val].location.includes(locats[l])){
 							tar = locats[l];
 							content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
+							if(tar == "New York City")
+							{
+								tar = "NYC"
+								content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
+							}
+							if(tar == "Virginia")
+							{
+								tar = "VA"
+								content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
+							}
 						}
 					}
                   var note = `
@@ -4095,7 +4111,7 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 			
 			document.querySelector(`.svg-menu-item0-${nameid}`).addEventListener('click', function(e) {
             document.querySelector('.svg-custom-menu').style.display = 'none';
-			let docids = [], organ=[], perso=[];
+			var docids = [], organ=[], perso=[];
 			
 			for(var j = 0; j<persons.split(',').length;j++)
 			{
@@ -4887,7 +4903,7 @@ svg.selectAll(".rectcom")
 			
 			document.querySelector(`.svg-menu-item0-${nameid}`).addEventListener('click', function(e) {
             document.querySelector('.svg-custom-menu').style.display = 'none';
-			let docids = [], organ=[], locats=[];
+			var docids = [], organ=[], locats=[];
 			
 			for(var i = 0; i<locs.split(',').length;i++)
 			{
@@ -4914,7 +4930,7 @@ svg.selectAll(".rectcom")
 						organ.push(tar);
 				}
 			}
-			
+
 			for (var val in docids){
 				count = 0;
 				for (var o in organ)
@@ -4926,6 +4942,9 @@ svg.selectAll(".rectcom")
 					docids.splice(val,1)
 			}
 			}
+			
+			if(nameid==1)docids.splice(1,1)
+			
 			for (var val in docids){
 					let content = docids[val].docText;
 					let id = docids[val].docId;
@@ -4941,6 +4960,16 @@ svg.selectAll(".rectcom")
 					{
 						if(docids[val].location.includes(locats[l])){
 							tar = locats[l];
+							content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
+						}
+						if(tar == "New York City")
+						{
+							tar = "NYC"
+							content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
+						}
+						if(tar == "Virginia")
+						{
+							tar = "VA"
 							content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
 						}
 					}
@@ -6867,7 +6896,7 @@ function ClusterChainhover() {
 			
 			document.querySelector(`.svg-menu-item0-${nameid}`).addEventListener('click', function(e) {
             document.querySelector('.svg-custom-menu').style.display = 'none';
-			let docids = [], organ=[], locats=[];
+			var docids = [], organ=[], locats=[],perso=[];
 			
 			for(var i = 0; i<locs.split(',').length;i++)
 			{
@@ -6895,8 +6924,18 @@ function ClusterChainhover() {
 				}
 			}
 			
+			for(var j = 0; j<persons.split(',').length;j++)
+			{
+			person = persons.split(',')[j];
+			let sor = document.querySelector('[personsid="' + person + '"]').getAttribute('data-name');
+			if(!(perso.includes(sor)))
+				{
+						perso.push(sor);
+				}
+			}
+			
 			for (var val in docids){
-				count = 0;
+				let count = 0;
 				for (var o in organ)
 				{
 					if(!(docids[val].organization.includes(organ[o])))
@@ -6905,7 +6944,28 @@ function ClusterChainhover() {
 				if(count==organ.length)
 					docids.splice(val,1)
 			}
+			
+			for (var val in docids){
+				let count = 0;
+				for (var p in perso)
+				{
+					if(!(docids[val].name.includes(perso[p])))
+						count = count +1;
+				}
+				if(count==perso.length)
+					docids.splice(val,1)
 			}
+			for (var val in docids){
+			var intersections = docids[val].name.filter(e => perso.indexOf(e) !== -1);
+			if(intersections.length==0)docids.splice(val,1)}
+			for (var val in docids){
+			var intersections2 = docids[val].location.filter(e => locats.indexOf(e) !== -1);
+			if(intersections2.length==0)docids.splice(val,1)}
+			for (var val in docids){			
+			var intersections3 = docids[val].organization.filter(e => organ.indexOf(e) !== -1);
+			if(intersections3.length==0)docids.splice(val,1)}
+			}
+			
 			for (var val in docids){
 					let content = docids[val].docText;
 					let id = docids[val].docId;
@@ -6922,6 +6982,23 @@ function ClusterChainhover() {
 						if(docids[val].location.includes(locats[l])){
 							tar = locats[l];
 							content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
+						}
+						if(tar == "New York City")
+						{
+							tar = "NYC"
+							content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
+						}
+						if(tar == "Virginia")
+						{
+							tar = "VA"
+							content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
+						}
+					}
+					for (var p in perso)
+					{
+						if(docids[val].name.includes(perso[p])){
+							tar2 = perso[p];
+							content = content.replace(tar2, `<span class=highlighted-text>${tar2}</span>`);
 						}
 					}
 					
@@ -6959,11 +7036,11 @@ function ClusterChainhover() {
                     }
                   });
 
-                  connections7c.push({ source: circele, sourceid:nameid,target: $('#' + id),targetid:id });
+                  connections7ct.push({ source: circele, sourceid:nameid,target: $('#' + id),targetid:id });
 				  
 				  $('#' + id).on('drag', function() {
                     ClusterChainToTextCollection = [];
-                    connections7c.forEach(conn => {
+                    connections7ct.forEach(conn => {
                     const ele = conn.source;
 					let nameid = ele.getAttribute('clusterchainid')
 					let sid = conn.target[0].id;
@@ -6989,7 +7066,7 @@ function ClusterChainhover() {
                       let x2Loc = parseFloat(conn.target.css('left').split('px')[0]) + conn.target.find('.highlighted-text').position().left+5;
                       let y2Loc = parseFloat(conn.target.css('top').split('px')[0]) + conn.target.find('.highlighted-text').position().top + 40;
 
-                      ClusterOMToTextCollection.push({
+                      ClusterChainToTextCollection.push({
                         source : {
                           id: "clusterchain",
 						  ele:nameid,
@@ -8153,8 +8230,8 @@ function ClusterChainhover() {
 		  
 		  
 		  if($(this).parent().hasClass('clusterchain-data-box')){
-            ClusterChainToMap = [], ClusterChainToOrg = [],ClusterChainToMap=[],ClusterChainToGM=[],ClusterChainToGO=[],ClusterChainToOM=[],
-			connections7cm=[],connections7co=[],connections7cg=[],connections7cgm=[],connections7cgo=[],connections7com=[];
+            ClusterChainToMap = [], ClusterChainToOrg = [],ClusterChainToMap=[],ClusterChainToGM=[],ClusterChainToGO=[],ClusterChainToOM=[],connections7ct=[],
+			connections7cm=[],connections7co=[],connections7cg=[],connections7cgm=[],connections7cgo=[],connections7com=[];ClusterChainToTextCollection=[];
             document.querySelectorAll('.link-newcbig').forEach(ele => {
               ele.remove();
             });
@@ -8173,7 +8250,26 @@ function ClusterChainhover() {
 			document.querySelectorAll('.link-newcbiom').forEach(ele => {
               ele.remove();
             });
+			document.querySelectorAll('.link-newcbit').forEach(ele => {
+              ele.remove();
+            });
           }
+		  
+			for (var i = ClusterChainToTextCollection.length - 1; i >= 0; --i) {
+			  if (ClusterChainToTextCollection[i].target.ele ==sid) {
+				ClusterChainToTextCollection.splice(i, 1); 
+			  }}
+		  
+			for (var i = connections7ct.length - 1; i >= 0; --i) {
+			  if (connections7ct[i].targetid == sid) {
+				connections7ct.splice(i, 1); 
+			  }}
+			  
+		  document.querySelectorAll('.link-newcbit').forEach(ele => {
+              if(ele.getAttribute('tar') == sid){
+				  ele.remove();
+		  }})
+		  
 		  
           if($(this).parent().hasClass('custom-data')) {
             $(this).parent().hide();

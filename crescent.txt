@@ -268,7 +268,7 @@
     <Location>Sudan</Location>
     <Misc>Saudi</Misc>
     <Organization>FBI</Organization>
-    <Location>New York City</Location>
+    <Location>NYC</Location>
     <Person>Mark Davis</Person>
     <Location>Canada</Location>
     <Misc>Canadian</Misc>
