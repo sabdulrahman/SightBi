@@ -61,7 +61,7 @@
       <g></g>
     </svg>
 	
-    <div class="right" id="board" style = "position:relative;background-color: #FFFFFF;">
+    <div class="right" id="board" style = "background-color: #FFFFFF;">
 	
       <div class="all-data-box note the-node custom-data"  style ="left:750px;top:10px;" data-dialog="graph">
         <div class='close_note'>X</div>
@@ -121,7 +121,7 @@
       </div>
 	  
 	  
-	  <div class="organize-data-box note the-node custom-data" style = "left:10px; bottom:0px; width:500px; height:450px; display:none; background-color: #FFFFFF;">
+	  <div class="organize-data-box note the-node custom-data" id="orgbox" style = "left:10px; bottom:0px; width:500px; height:450px; display:none; background-color: #FFFFFF;">
         <div class='close_note'>X</div>
         <h3>Organizations</h3>
 	<label><input type="checkbox" id="sort">Sort values</label>
@@ -180,7 +180,6 @@
 	<script src="d3-timelines.js"></script>
 	<script src="./calendar.js"></script>
     <script src="./consts.js"></script>
-	<script src="https://unpkg.com/d3-3d/build/d3-3d.min.js"></script>
 	<script src="https://code.highcharts.com/highcharts.js"></script>
 	<script src="https://code.highcharts.com/highcharts-3d.js"></script>
 	<script src="https://code.highcharts.com/modules/exporting.js"></script>
@@ -206,6 +205,125 @@
 		
 	  var tooltip = d3.select('#mapbox').append("div").attr("class", "toolTip");		
 	  var tooltip2 = d3.select('#graphbox').append("div").attr("class", "toolTip");		
+
+	  var board = d3.select('#board');
+	  board.on("mouseup",function(){
+		  if(window.getSelection) {
+			let selection = window.getSelection();
+			let id = event.target.getAttribute('id');
+			let bo = document.querySelector("#board");
+			let $event = event;
+            let ele = event.target; 
+			if(ele == bo){
+			if(event.button==2){
+				const rightCustomMenu = document.querySelector('.svg-custom-menu');
+
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item-${id} svg-menu-item">Rearrange Views</li>`
+			rightCustomMenu.style.display = 'block';
+			rightCustomMenu.style.left = event.clientX + 'px';
+			rightCustomMenu.style.top = event.clientY + 'px';
+			
+			document.querySelector(`.svg-menu-item-${id}`).addEventListener('click', function(e) {
+			document.querySelector('.svg-custom-menu').style.display = 'none';
+			
+			if(document.querySelector('.right .bubblemap-box').style.display == 'block' && document.querySelector('.right .all-data-box').style.display == 'block' && document.querySelector('.right .clusterGM-data-box').style.display == 'block' )
+			{
+			let element = document.getElementById('mapbox');
+			let position = element.getBoundingClientRect();
+			let x = position.left;
+			let y = position.top;
+			
+			let element2 = document.getElementById('graphbox');
+			let position2 = element2.getBoundingClientRect();
+			let x2 = position2.left;
+			let y2 = position2.top;
+
+			let d = document.getElementById('clusterGM');
+			let width = d.offsetWidth;
+			
+			let mx1 = ((x+x2)/2)-parseFloat(width)/2;
+			let mx2 = (y+y2)/2;
+			
+			d.style.position = "absolute";
+			d.style.left = mx1+'px';
+			d.style.top = mx2+'px';			
+			}
+			if(document.querySelector('.right .bubblemap-box').style.display == 'block' && document.querySelector('.right .organize-data-box').style.display == 'block' && document.querySelector('.right .clusterOM-data-box').style.display == 'block' )
+			{
+			let element = document.getElementById('mapbox');
+			let position = element.getBoundingClientRect();
+			let x = position.left;
+			let y = position.top;
+			
+			let element2 = document.getElementById('orgbox');
+			let position2 = element2.getBoundingClientRect();
+			let x2 = position2.left;
+			let y2 = position2.top;
+
+			let d = document.getElementById('clusterOM');
+			let width = d.offsetWidth;
+			
+			let mx1 = ((x+x2)/2)-parseFloat(width)/2;
+			let mx2 = (y+y2)/2;
+			
+			d.style.position = "absolute";
+			d.style.left = mx1+'px';
+			d.style.top = mx2+'px';			
+			}
+			if(document.querySelector('.right .all-data-box').style.display == 'block' && document.querySelector('.right .organize-data-box').style.display == 'block' && document.querySelector('.right .clusterGO-data-box').style.display == 'block' )
+			{
+			let element = document.getElementById('graphbox');
+			let position = element.getBoundingClientRect();
+			let x = position.left;
+			let y = position.top;
+			
+			let element2 = document.getElementById('orgbox');
+			let position2 = element2.getBoundingClientRect();
+			let x2 = position2.left;
+			let y2 = position2.top;
+
+			let d = document.getElementById('clusterGO');
+			let width = d.offsetWidth;
+			
+			let mx1 = ((x+x2)/2)-parseFloat(width)/2;
+			let mx2 = (y+y2)/2;
+			
+			d.style.position = "absolute";
+			d.style.left = mx1+'px';
+			d.style.top = mx2+'px';			
+			}
+			if(document.querySelector('.right .all-data-box').style.display == 'block' && document.querySelector('.right .organize-data-box').style.display == 'block' && document.querySelector('.right .bubblemap-box').style.display == 'block'  && document.querySelector('.right .clusterchain-data-box').style.display == 'block' )
+			{
+			let element = document.getElementById('graphbox');
+			let position = element.getBoundingClientRect();
+			let x = position.left;
+			let y = position.top;
+			
+			let element2 = document.getElementById('orgbox');
+			let position2 = element2.getBoundingClientRect();
+			let x2 = position2.left;
+			let y2 = position2.top;
+			
+			let element3 = document.getElementById('mapbox');
+			let position3 = element3.getBoundingClientRect();
+			let x3 = position3.left;
+			let y3 = position3.top;			
+
+			let d = document.getElementById('clusterChain');
+			let width = d.offsetWidth;
+			
+			let mx1 = ((x+x2+x3)/3)-parseFloat(width)/2;
+			let mx2 = (y+y2+y3)/3;
+			
+			d.style.position = "absolute";
+			d.style.left = mx1+'px';
+			d.style.top = mx2+'px';			
+			}			
+			});
+			}
+		  }}
+	  });
+
 
       let positions = {
         'graph' : {
@@ -6991,6 +7109,11 @@ function ClusterChainhover() {
 						if(tar == "Virginia")
 						{
 							tar = "VA"
+							content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
+						}
+						if(tar == "St. Mary 's Terrace")
+						{
+							tar = "St. Mary's Terrace"
 							content = content.replace(tar, `<span class=highlighted-text>${tar}</span>`);
 						}
 					}
