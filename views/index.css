@@ -387,3 +387,13 @@ input:checked + .slider:before {
   stroke: #ccc;
   shape-rendering: crispEdges;
 }
+
+.highlight { 
+	background-color: yellow; 
+color:black;
+}
+
+.unhighlight { 
+	background-color: #989898; 
+	color:red;
+}
