@@ -63,9 +63,13 @@
 	
     <div class="right" id="board" style = "background-color: #FFFFFF;">
 	
-      <div class="all-data-box note the-node custom-data"  style ="left:750px;top:10px;" data-dialog="graph">
+      <div class="all-data-box note the-node custom-data" id = "graphboxout" style ="left:750px;top:10px;" data-dialog="graph">
         <div class='close_note'>X</div>
-        <h3>Graph Header</h3>
+        <h3>Person Info&nbsp;
+		<label class="switch">
+		<input type="checkbox" id="movefixgraph">
+		<span class="slider round"></span>
+		</label></h3>
         <div class="all-data-wrapper" id="graphbox">
           <p class="all-data"></p>
         </div>
@@ -73,13 +77,21 @@
 	  
       <div class="matrix-data-box note the-node custom-data" ">
         <div class='close_note'>X</div>
-        <h3>Matrix Header</h3>
+        <h3>Matrix&nbsp;
+		<label class="switch">
+		<input type="checkbox" id="movefixmatrix">
+		<span class="slider round"></span>
+		</label></h3>
         <p class="matrix-data"></p>
       </div>
 
-      <div class="bubblemap-box note the-node custom-data" data-dialog="bubble-map" style = "left:10px; top:10px;width:700px; height:400px;">
+      <div class="bubblemap-box note the-node custom-data" id="bubblemapbox" data-dialog="bubble-map" style = "left:10px; top:10px;width:700px; height:400px;">
         <div class='close_note'>X</div>
-        <h3>Bubble Map Header</h3>
+        <h3>Location Info&nbsp;
+		<label class="switch">
+		<input type="checkbox" id="movefixmap">
+		<span class="slider round"></span>
+		</label></h3>
         <div class="bubblemap-wrapper" id="mapbox">
           <p class="bubblemap">
             <span class="loading-text">Please wait while data is being fetched...</span>
@@ -90,9 +102,9 @@
 	  
 	  <div class="clusterGO-data-box note the-node custom-data" id="clusterGO" style = "width:300px; display:none;   height:300px;left:400px; bottom:0px;background-color: #FFFFFF;">
         <div class='close_note'>X</div>
-        <h3>Cluster Graph Organization &nbsp;
+        <h3>Person - Organization &nbsp;
 		<label class="switch">
-  <input type="checkbox" id="movefixGO" style="float:left;">
+  <input type="checkbox" id="movefixGO" style="float:right;">
   <span class="slider round"></span>
 	</label>
 	</h3>
@@ -101,9 +113,9 @@
 	  
 	  <div class="clusterGM-data-box note the-node custom-data" id="clusterGM" style = "display:none; width:300px; height:300px;left:50px; bottom:0px; background-color: #FFFFFF;">
         <div class='close_note'>X</div>
-        <h3>Cluster Graph Map &nbsp;
+        <h3>Person - Location &nbsp;
 		<label class="switch">
-  <input type="checkbox" id="movefixGM"  style="float:left;">
+  <input type="checkbox" id="movefixGM">
   <span class="slider round"></span>
 	</label>
 	</h3>
@@ -112,9 +124,9 @@
 	  	  
 	  <div class="clusterOM-data-box note the-node custom-data" id="clusterOM" style = "left:550px;display:none; bottom:0px; background-color: #FFFFFF;">
         <div class='close_note'>X</div>
-        <h3>Cluster Organization Map &nbsp;
+        <h3>Location - Organization &nbsp;
 		<label class="switch">
-  <input type="checkbox" id="movefixOM" style="float:left;">
+  <input type="checkbox" id="movefixOM" style="float:right;">
   <span class="slider round"></span>
 	</label>
 	</h3>
@@ -123,8 +135,12 @@
 	  
 	  <div class="organize-data-box note the-node custom-data" id="orgbox" style = "left:10px; bottom:0px; width:500px; height:450px; display:none; background-color: #FFFFFF;">
         <div class='close_note'>X</div>
-        <h3>Organizations</h3>
-	<label><input type="checkbox" id="sort">Sort values</label>
+        <h3>Organization Info&nbsp;
+		<label class="switch">
+		  <input type="checkbox" id="movefixorg">
+		  <span class="slider round"></span>
+		</label></h3>
+	<label><input type="checkbox" id="sort">Sort by Frequency</label>
       </div>
 	  
 	  <div class="dates-data-box note the-node custom-data" style = "width:500px; height:450px; display:none; background-color: #FFFFFF;">
@@ -136,9 +152,9 @@
 	  
 	  <div class="clusterchain-data-box note the-node custom-data" id = "clusterChain" style = " display:none; width:600px; background-color: #FFFFFF;">
 		  <div class='close_note'>X</div>
-        <h3>Cluster Chains&nbsp;
+        <h3>Person - Location - Organization&nbsp;
 		<label class="switch">
-  <input type="checkbox" id="movefixCBI" style="float:left;">
+  <input type="checkbox" id="movefixCBI">
   <span class="slider round"></span>
 	</label></h3>
 	<div class="row align-items-center">
@@ -186,6 +202,8 @@
 	<script src="https://code.highcharts.com/modules/export-data.js"></script>
 	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 	<script src="https://unpkg.com/d3-simple-slider"></script>	
+
+
 	
 	<script>
       var bubbleMapSVG = d3.select("#bubbleMap");
@@ -422,6 +440,7 @@
 	var timeout = setTimeout(function(d){tooltip.style("display", "none");},1000);	
 	var timeout2 = setTimeout(function(d){tooltip2.style("display", "none");},1000);	
 
+
       function ready(error, dataGeo, data) {
         var allContinent = d3.map(data, function(d){return(d.continent)}).keys()
         var color = d3.scaleOrdinal()
@@ -453,7 +472,7 @@
               .attr("cx", function(d){ return projection([+d.lng, +d.lat])[0] })
               .attr("cy", function(d){ return projection([+d.lng, +d.lat])[1] })
               .attr("r", function(d){ return 5 }) //size(+d.n)
-              .style("fill", function(d){ return '#ad9ee3' })
+              .style("fill", function(d){ return '#86aff8' })
               .attr("stroke", function(d){ if(d.n>2000){return "black"}else{return "none"}  })
               .attr("stroke-width", 1)
               .attr("fill-opacity", .4)
@@ -470,11 +489,75 @@
 			  .on("mouseover", maphover)
 			  .on("mouseout",mapout)
 			  .on("mouseup",mapClick);
-          
-              $('.bubblemap-box').on('drag', reDrawLines);
-              $('.all-data-box').on('drag', reDrawLines);
+
+				var selectedmap;
+				var draggableOptionsmap = {
+					start: function(event, ui) {
+						//get all selected...
+						if (ui.helper.hasClass('selectedmap')) selectedmap = $('div.selectedmap');
+						else {
+							selectedmap = $(ui.helper);
+							$('div.selectedmap').removeClass('selectedmap')
+						}
+					},
+					drag: function(event, ui) {
+						var currentLoc = $(this).position();
+						var prevLoc = $(this).data('prevLoc');
+						if (!prevLoc) {
+							prevLoc = ui.originalPosition;
+						}
+
+						var offsetLeft = currentLoc.left-prevLoc.left;
+						var offsetTop = currentLoc.top-prevLoc.top;
+
+						moveSelectedmap(offsetLeft, offsetTop);
+						$(this).data('prevLoc', currentLoc);
+					}
+				};
+
+				function moveSelectedmap(ol, ot){
+					//console.log("moving to: " + ol + ":" + ot);
+					selectedmap.each(function(){
+						$this =$(this);
+						var p = $this.position();
+						var l = p.left;
+						var t = p.top;
+						//console.log({id: $this.attr('id'), l: l, t: t});
+						$this.css('left', l+ol);
+						$this.css('top', t+ot);
+					})}
+			  
+			  $('.bubblemap-box').draggable(draggableOptionsmap);
+			  $('.bubblemap-box').addClass('selectedmap');
+			  $('.bubblemap-box').on('drag', reDrawLines);
 
         document.querySelector('.loading-text').style.display = 'none';  
+
+		$("#movefixmap").on("change", function(e){
+		if(document.getElementById("movefixmap").checked){
+			document.getElementById('bubblemapbox').ondragstart = function() { return false; };
+			$('.bubblemap-box').removeClass('selectedgraph')
+			$('.bubblemap-box').removeClass('selectedorg')
+			$('.bubblemap-box').removeClass('selectedGM')
+			$('.bubblemap-box').removeClass('selectedOM')
+			$('.bubblemap-box').removeClass('selectedchain')
+		}
+		else{
+			document.getElementById('bubblemapbox').ondragstart = function() { return true; };
+				if(GraphToMapCollection.length>0)
+					$('.bubblemap-box').addClass('selectedgraph')
+				if(OrgToMapCollection.length==0)					
+					$('.bubblemap-box').addClass('selectedorg')
+				if(ClusterGMToMap.length==0)
+					$('.bubblemap-box').addClass('selectedGM')
+				if(ClusterOMToMap.length==0)					
+					$('.bubblemap-box').addClass('selectedOM')
+				if(ClusterChainToMap.length==0)					
+					$('.bubblemap-box').addClass('selectedchain')				
+		};
+      })		
+
+
       }
 	  
 	  
@@ -2504,9 +2587,9 @@
 			  
             const rightCustomMenu = document.querySelector('.svg-custom-menu');
 			if(manualink==false)
-			{rightCustomMenu.innerHTML = `<li class="svg-menu-item-${locid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${locid} svg-menu-item">Start manual link</li>`}
+			{rightCustomMenu.innerHTML = `<li class="svg-menu-item-${locid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${locid} svg-menu-item">Link From This</li>`}
 			else
-			{rightCustomMenu.innerHTML = `<li class="svg-menu-item-${locid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${locid} svg-menu-item">End manual link</li>`}
+			{rightCustomMenu.innerHTML = `<li class="svg-menu-item-${locid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${locid} svg-menu-item">Link To This</li>`}
 			rightCustomMenu.style.display = 'block';
             rightCustomMenu.style.left = event.clientX + 'px';
             rightCustomMenu.style.top = event.clientY + 'px';
@@ -2523,9 +2606,13 @@
               scontent = scontent.replace(loc, `<span class=highlighted-text>${loc}</span>`);
 	
               var note = `
-              <div class="note the-node" id='`+ sid +`' style="z-index: 999;">
+              <div class="reldoc note the-node" id='`+ sid +`' style="z-index: 999;">
                 <div class='close_note'>X</div>
-                <h3>`+ sid +' '+loc +`</h3>
+                <h3>`+ sid +' '+loc +`&nbsp;
+				<label class="switch">
+				  <input type="checkbox" id="movefixm`+sid+`">
+				  <span class="slider round"></span>
+				</label></h3>
                 <p style="cursor:text;">
                   `+ scontent +`
                 </p>
@@ -2538,6 +2625,15 @@
                 cancel: "p"
               });
 			  
+			$("#movefixm"+sid).on("change", function(e){
+			if(document.getElementById("movefixm"+sid).checked){
+				document.getElementById(sid).ondragstart = function() { return false; };
+			}
+			else{
+				document.getElementById(sid).ondragstart = function() { return true; };
+			};
+		  })
+
 
               let x2Loc = parseFloat($('#' + sid).css('left').split('px')[0]) + $('#' + sid).find('.highlighted-text').position().left+5;
               let y2Loc = parseFloat($('#' + sid).css('top').split('px')[0]) + $('#' + sid).find('.highlighted-text').position().top + 40;
@@ -2558,6 +2654,8 @@
               });
 
               connections1bt.push({ source: ele, sourceid:locid, target: $('#' + sid), targetid:sid, boxElement: 'bubblemap-box' });
+			  $('#' + sid).addClass('selectedmap');
+
               drawPolyLineMap(bubbleToTextCollection);
 
 			  $('#' + sid).on('drag', function() {
@@ -2717,7 +2815,7 @@
 			  
 			if(event.target.getAttribute('clickhist') > 0)
 			   {
-				  d3.select(this).style("fill", "#ad9ee3");
+				  d3.select(this).style("fill", "#86aff8");
 
 			   }
 
@@ -2759,7 +2857,10 @@
 				hist = parseInt(event.target.getAttribute('clickhist'))+1
 				event.target.setAttribute('clickhist', hist)
 				event.target.setAttribute('clicked', true)
+				if(!(document.getElementById("movefixgraph").checked))				
+					$('.all-data-box').addClass('selectedmap');
 				drawPolyLineMap(bubbleToGraphCollection);
+				
 				}
 			if(document.querySelector('.right .organize-data-box').style.display == 'block')
 			{
@@ -2793,6 +2894,8 @@
 				hist = parseInt(event.target.getAttribute('clickhist'))+1
 				event.target.setAttribute('clickhist', hist)
 				event.target.setAttribute('clicked', true)
+				if(!(document.getElementById("movefixorg").checked))								
+					$('.organize-data-box').addClass('selectedmap');
 				drawPolyLineMap(bubbleToOrgCollection);
 			}
 			}
@@ -2849,6 +2952,8 @@
 					hist = parseInt(event.target.getAttribute('clickhist'))+1
 					event.target.setAttribute('clickhist', hist)
 					event.target.setAttribute('clicked', true)
+					if(!(document.getElementById("movefixGM").checked))									
+						$('.clusterGM-data-box').addClass('selectedmap');
 					drawPolyLineMap(bubbleToGMCollection);					
 				  }
 				}
@@ -2905,6 +3010,8 @@
 					hist = parseInt(event.target.getAttribute('clickhist'))+1
 					event.target.setAttribute('clickhist', hist)
 					event.target.setAttribute('clicked', true)
+					if(!(document.getElementById("movefixOM").checked))									
+						$('.clusterOM-data-box').addClass('selectedmap');					
 					drawPolyLineMap(bubbleToOMCollection);					
 				  }
 				}
@@ -2961,6 +3068,8 @@
 					hist = parseInt(event.target.getAttribute('clickhist'))+1
 					event.target.setAttribute('clickhist', hist)
 					event.target.setAttribute('clicked', true)
+					if(!(document.getElementById("movefixCBI").checked))									
+						$('.clusterchain-data-box').addClass('selectedmap');										
 					drawPolyLineMap(bubbleToChainCollection);						  
 				  }
 				}
@@ -2970,6 +3079,17 @@
 			}
 			
 			else{
+				if(bubbleToGraphCollection.length==0)
+					$('.organize-data-box').removeClass('selectedmap')
+				if(bubbleToOrgCollection.length==0)					
+					$('.all-data-box').removeClass('selectedmap')
+				if(bubbleToGMCollection.length==0)
+					$('.clusterGM-data-box').removeClass('selectedmap')
+				if(bubbleToOMCollection.length==0)					
+					$('.clusterOM-data-box').removeClass('selectedmap')
+				if(bubbleToChainCollection.length==0)					
+					$('.clusterchain-data-box').removeClass('selectedmap')	
+					
 				event.target.setAttribute('clicked', false)
 			}}
           }
@@ -3236,7 +3356,7 @@
 		timeout = setTimeout(function(d){tooltip.style("display", "none");},1000)
 		
 		if((d3.select(this).style("fill")== "rgb(72, 93, 94)")){
-				d3.select(this).style("fill", "#ad9ee3");
+				d3.select(this).style("fill", "#86aff8");
 			d3.select(this).attr("r", function(d){ return 5 })}
 			
 		document.querySelectorAll('.link-newbtemp').forEach(ele => {
@@ -4288,9 +4408,75 @@
           });
 
         simulation.nodes(nodes).on("tick", ticked);
-
         simulation.force("link").links(links);
+		
+				var selectedgraph;
+				var draggableOptionsgraph = {
+					start: function(event, ui) {
+						//get all selected...
+						if (ui.helper.hasClass('selectedgraph')) selectedgraph = $('div.selectedgraph');
+						else {
+							selectedgraph = $(ui.helper);
+							$('div.selectedgraph').removeClass('selectedgraph')
+						}
+					},
+					drag: function(event, ui) {
+						var currentLoc = $(this).position();
+						var prevLoc = $(this).data('prevLoc');
+						if (!prevLoc) {
+							prevLoc = ui.originalPosition;
+						}
+
+						var offsetLeft = currentLoc.left-prevLoc.left;
+						var offsetTop = currentLoc.top-prevLoc.top;
+
+						moveSelectedgraph(offsetLeft, offsetTop);
+						$(this).data('prevLoc', currentLoc);
+					}
+				};
+
+				function moveSelectedgraph(ol, ot){
+					//console.log("moving to: " + ol + ":" + ot);
+					selectedgraph.each(function(){
+						$this =$(this);
+						var p = $this.position();
+						var l = p.left;
+						var t = p.top;
+						//console.log({id: $this.attr('id'), l: l, t: t});
+						$this.css('left', l+ol);
+						$this.css('top', t+ot);
+					})}
+			  
+			  $('.all-data-box').draggable(draggableOptionsgraph);
+			  $('.all-data-box').addClass('selectedgraph');
+		
+		
         $('.all-data-box').on('drag', reDrawLines);
+
+		$("#movefixgraph").on("change", function(e){
+		if(document.getElementById("movefixgraph").checked){
+			document.getElementById('graphboxout').ondragstart = function() { return false; };
+			$('.all-data-box').removeClass('selectedmap')
+			$('.all-data-box').removeClass('selectedorg')
+			$('.all-data-box').removeClass('selectedGM')
+			$('.all-data-box').removeClass('selectedGO')
+			$('.all-data-box').removeClass('selectedchain')			
+		}
+		else{
+			document.getElementById('graphboxout').ondragstart = function() { return true; };
+				if(bubbleToGraphCollection.length>0)
+					$('.all-data-box').addClass('selectedmap')
+				if(OrgToGraphCollection.length==0)					
+					$('.all-data-box').addClass('selectedorg')
+				if(ClusterGMToGraph.length==0)
+					$('.all-data-box').addClass('selectedGM')
+				if(ClusterGOToGraph.length==0)					
+					$('.all-data-box').addClass('selectedGO')
+				if(ClusterChainToGraph.length==0)					
+					$('.all-data-box').addClass('selectedchain')			
+		};
+      })		
+		
       }
 		
       function graphClick() {
@@ -4437,6 +4623,8 @@
 			hist = parseInt(event.target.getAttribute('clickhist'))+1
 			event.target.setAttribute('clickhist', hist)
 			event.target.setAttribute('clicked', true)
+			if(!(document.getElementById("movefixmap").checked))				
+				$('.bubblemap-box').addClass('selectedgraph');
 
 			drawPolyLineGraph(GraphToMapCollection);
 			}
@@ -4473,7 +4661,8 @@
 				hist = parseInt(event.target.getAttribute('clickhist'))+1
 				event.target.setAttribute('clickhist', hist)
 				event.target.setAttribute('clicked', true)
-
+				if(!(document.getElementById("movefixorg").checked))								
+					$('.organize-data-box').addClass('selectedgraph');
 				drawPolyLineGraph(GraphToOrgCollection);
 			}
 
@@ -4529,7 +4718,8 @@
 					hist = parseInt(event.target.getAttribute('clickhist'))+1
 					event.target.setAttribute('clickhist', hist)
 					event.target.setAttribute('clicked', true)
-
+					if(!(document.getElementById("movefixGM").checked))				
+						$('.clusterGM-data-box').addClass('selectedgraph');
 					drawPolyLineGraph(GraphToGMCollection);				
 				  }
 				}
@@ -4586,7 +4776,8 @@
 					hist = parseInt(event.target.getAttribute('clickhist'))+1
 					event.target.setAttribute('clickhist', hist)
 					event.target.setAttribute('clicked', true)
-
+					if(!(document.getElementById("movefixGO").checked))									
+						$('.clusterGO-data-box').addClass('selectedgraph');
 					drawPolyLineGraph(GraphToGOCollection);				
 				  }
 				}
@@ -4643,6 +4834,8 @@
 					hist = parseInt(event.target.getAttribute('clickhist'))+1
 					event.target.setAttribute('clickhist', hist)
 					event.target.setAttribute('clicked', true)
+					if(!(document.getElementById("movefixCBI").checked))				
+						$('.clusterchain-data-box').addClass('selectedgraph');					
 					drawPolyLineGraph(GraphToChainCollection);					
 				  }
 				}
@@ -4650,6 +4843,17 @@
 			}			
 		  }
 		  else{
+				if(GraphToMapCollection.length==0)
+					$('.bubblemap-box').removeClass('selectedgraph')
+				if(GraphToOrgCollection.length==0)					
+					$('.organize-data-box').removeClass('selectedgraph')
+				if(GraphToGMCollection.length==0)
+					$('.clusterGM-data-box').removeClass('selectedgraph')
+				if(GraphToGOCollection.length==0)					
+					$('.clusterGO-data-box').removeClass('selectedgraph')
+				if(GraphToChainCollection.length==0)					
+					$('.clusterchain-data-box').removeClass('selectedgraph')	
+					
 				event.target.setAttribute('clicked', false)
 			}
 		  }
@@ -4659,9 +4863,9 @@
 		const rightCustomMenu = document.querySelector('.svg-custom-menu');
 		
 		if(manualink==false)
-        rightCustomMenu.innerHTML = `<li class="svg-menu-item-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Start manual link</li>`
+        rightCustomMenu.innerHTML = `<li class="svg-menu-item-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Link From This</li>`
         else
-		rightCustomMenu.innerHTML = `<li class="svg-menu-item-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Stop manual link</li>`
+		rightCustomMenu.innerHTML = `<li class="svg-menu-item-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Link To This</li>`
 
 		rightCustomMenu.style.display = 'block';
         rightCustomMenu.style.left = event.clientX + 'px';
@@ -4679,9 +4883,13 @@
             content = content.replace(name, `<span class=highlighted-text>${name}</span>`);
 
                   var note = `
-                  <div class="note the-node" id='`+ sid +`' style="z-index: 999;">
+                  <div class="reldoc note the-node" id='`+ sid +`' style="z-index: 999;">
                     <div class='close_note'>X</div>
-                    <h3>`+ sid +`</h3>
+                    <h3>`+ sid +`&nbsp;
+				<label class="switch">
+				  <input type="checkbox" id="movefixg`+sid+`">
+				  <span class="slider round"></span>
+				</label></h3>
                     <p style="cursor:text;">
                       `+ content +`
                     </p>
@@ -4715,6 +4923,7 @@
                       yOffset : y2Loc
                     }
                   });
+					$('#' + sid).addClass('selectedgraph');
 
                   connections2gt.push({ source: ele, sourceid:nameid,target: $('#' + sid),targetid:sid, boxElement: 'all-data-box' });
 				  $('#' + sid).on('drag', function() {
@@ -5220,7 +5429,7 @@ let	yMap02 = function(d) { return y(yValue(d))+40+(60-(d['map'].split(',').lengt
 	  .attr('map',function(d){return d['map'];})
 	  .attr('clustergmid',function(d,i){return (i+1);})
 	  .attr('id',function(d,i){return "cgmcircid"+(i+1);})	
-	  .style("fill", '#ad9ee3')
+	  .style("fill", '#a1c9fb')
 	  .attr("clickhist",0)
 	  .attr('clicked',false)
 	  .attr("visibility", "visible")
@@ -5239,7 +5448,7 @@ let	yMap02 = function(d) { return y(yValue(d))+40+(60-(d['map'].split(',').lengt
 		  .attr('height', function(d){return d['person'].split(',').length * 12;})
 		  .attr("x", xMap0)
 		  .attr("y", yMap01)
-		.style("fill", '#ad9ee3')
+		.style("fill", '#a1c9fb')
 			  .attr("visibility", "hidden")
 		.attr('stroke', '#000000')
 		.attr('stroke-width', '1')
@@ -5255,7 +5464,7 @@ let	yMap02 = function(d) { return y(yValue(d))+40+(60-(d['map'].split(',').lengt
 		  .attr('height', function(d){return d['map'].split(',').length * 5;})
 		  .attr("x", xMap01)
 		  .attr("y", yMap02)
-		.style("fill", '#ad9ee3')
+		.style("fill", '#a1c9fb')
 		.attr('stroke', '#000000')
 		.attr('stroke-width', '1')
 		  .attr("visibility", "hidden")
@@ -5299,13 +5508,64 @@ let	yMap02 = function(d) { return y(yValue(d))+40+(60-(d['map'].split(',').lengt
 		  .on("mouseup",ClusterGMclick);
         });
 
+				var selectedGM;
+				var draggableOptionsGM = {
+					start: function(event, ui) {
+						//get all selected...
+						if (ui.helper.hasClass('selectedGM')) selectedGM = $('div.selectedGM');
+						else {
+							selectedGM = $(ui.helper);
+							$('div.selectedGM').removeClass('selectedGM')
+						}
+					},
+					drag: function(event, ui) {
+						var currentLoc = $(this).position();
+						var prevLoc = $(this).data('prevLoc');
+						if (!prevLoc) {
+							prevLoc = ui.originalPosition;
+						}
+
+						var offsetLeft = currentLoc.left-prevLoc.left;
+						var offsetTop = currentLoc.top-prevLoc.top;
+
+						moveSelectedGM(offsetLeft, offsetTop);
+						$(this).data('prevLoc', currentLoc);
+					}
+				};
+
+				function moveSelectedGM(ol, ot){
+					//console.log("moving to: " + ol + ":" + ot);
+					selectedGM.each(function(){
+						$this =$(this);
+						var p = $this.position();
+						var l = p.left;
+						var t = p.top;
+						//console.log({id: $this.attr('id'), l: l, t: t});
+						$this.css('left', l+ol);
+						$this.css('top', t+ot);
+					})}
+			  
+			  $('.clusterGM-data-box').draggable(draggableOptionsGM);
+			  $('.clusterGM-data-box').addClass('selectedGM');
+
+
 $('.clusterGM-data-box').on('drag', reDrawLines);
+
 	$("#movefixGM").on("change", function(e){
 		if(document.getElementById("movefixGM").checked){
 			document.getElementById('clusterGM').ondragstart = function() { return false; };
+			$('.clusterGM-data-box').removeClass('selectedmap')
+			$('.clusterGM-data-box').removeClass('selectedgraph')
+			$('.clusterGM-data-box').removeClass('selectedchain')				
 		}
 		else{
 			document.getElementById('clusterGM').ondragstart = function() { return true; };
+				if(GraphToGMCollection.length>0)
+					$('.clusterGM-data-box').addClass('selectedgraph')
+				if(bubbleToGMCollection.length==0)					
+					$('.clusterGM-data-box').addClass('selectedmap')
+				if(ClusterChainToGM.length==0)					
+					$('.clusterGM-data-box').addClass('selectedchain')				
 		};
       })
 
@@ -5362,13 +5622,13 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			const rightCustomMenu = document.querySelector('.svg-custom-menu');
             
 			if(detail=="false" && manualink==false)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Start manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">View Summary</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link From This</li>`
             else if(detail != "false" && manualink==true)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Stop manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link To This</li>`
 			else if(detail == "false" && manualink==true)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Stop manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">View Summary</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link To This</li>`
 			else if(detail != "false" && manualink==false)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Start manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link From This</li>`
 
 			rightCustomMenu.style.display = 'block';
             rightCustomMenu.style.left = event.clientX + 'px';
@@ -5444,9 +5704,13 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 						}
 					}
                   var note = `
-                  <div class="note the-node" id='`+ sid +`' style="z-index: 999;">
+                  <div class="reldoc note the-node" id='`+ sid +`' style="z-index: 999;">
                     <div class='close_note'>X</div>
-                    <h3>`+ sid +`</h3>
+                    <h3>`+ sid +`&nbsp;
+					<label class="switch">
+					  <input type="checkbox" id="movefixgm`+sid+`">
+					  <span class="slider round"></span>
+					</label></h3>
                     <p style="cursor:text;">
                       `+ content +`
                     </p>
@@ -5476,6 +5740,8 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
                       yOffset : y2Loc
                     }
                   });
+				  $('#' + sid).addClass('selectedGM');
+					
 				  connections4ct.push({ source: circele, sourceid:nameid,target: $('#' + sid),targetid:sid, boxElement: 'all-data-box' });
 				  $('#' + sid).on('drag', function() {
                     ClusterGMToTextCollection = [];
@@ -5683,14 +5949,14 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			{
 			if(detail=="false")
 			{
-				  circele.setAttribute("style", "fill: #ad9ee3");
+				  circele.setAttribute("style", "fill: #a1c9fb");
 				  circele.setAttribute("stroke","#000000")
 
 			}
 			else
 			{
-				  document.getElementById('cgmgid'+nameid).setAttribute("style","fill: #ad9ee3");
-				  document.getElementById('cgmmid'+nameid).setAttribute("style","fill: #ad9ee3");
+				  document.getElementById('cgmgid'+nameid).setAttribute("style","fill: #a1c9fb");
+				  document.getElementById('cgmmid'+nameid).setAttribute("style","fill: #a1c9fb");
 			}
 			}
 			
@@ -5758,6 +6024,8 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
 			circele.setAttribute('clicked', true);
+			if(!(document.getElementById("movefixgraph").checked))				
+				$('.all-data-box').addClass('selectedGM');			
 			drawPolyLineClusterGM(ClusterGMToGraph);
 			}
 			
@@ -5821,12 +6089,19 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
 			circele.setAttribute('clicked', true);
+			if(!(document.getElementById("movefixmap").checked))							
+				$('.bubblemap-box').addClass('selectedGM');			
 			drawPolyLineClusterGM(ClusterGMToMap);
 			}
 			}
 			
 			else
 			{
+				if(ClusterGMToGraph.length==0)
+					$('.all-data-box').removeClass('selectedGM');
+				if(ClusterGMToMap.length==0)
+					$('.bubblemap-box').removeClass('selectedGM');
+					
 				circele.setAttribute('clicked', false);
 			}
 			}
@@ -5994,11 +6269,11 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 
 					if(clickhist==0)
 					{
-					circele.setAttribute("style","fill: #ad9ee3");
+					circele.setAttribute("style","fill: #a1c9fb");
 					}
 					else
 					{
-					circele.setAttribute("style","fill: #ad9ee3");
+					circele.setAttribute("style","fill: #a1c9fb");
 					}
 				}
 			}
@@ -6008,12 +6283,12 @@ $('.clusterGM-data-box').on('drag', reDrawLines);
 				{
 				if(clickhist==0)
 				{
-				document.getElementById("cgmmid"+nameid).setAttribute("style","fill: #ad9ee3");
-				document.getElementById("cgmgid"+nameid).setAttribute("style","fill: #ad9ee3");}
+				document.getElementById("cgmmid"+nameid).setAttribute("style","fill: #a1c9fb");
+				document.getElementById("cgmgid"+nameid).setAttribute("style","fill: #a1c9fb");}
 				else
 				{
-				document.getElementById("cgmmid"+nameid).setAttribute("style","fill: #ad9ee3");
-				document.getElementById("cgmgid"+nameid).setAttribute("style","fill: #ad9ee3");
+				document.getElementById("cgmmid"+nameid).setAttribute("style","fill: #a1c9fb");
+				document.getElementById("cgmgid"+nameid).setAttribute("style","fill: #a1c9fb");
 				}}
 			}
 			}
@@ -6069,7 +6344,7 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 	  .attr('org',function(d){return d['organize'];})
 	  .attr('clustergoid',function(d,i){return (i+1);})
 	  .attr('id',function(d,i){return "cgocircid"+(i+1);})	
-	  .style("fill", '#ad9ee3')
+	  .style("fill", '#a1c9fb')
 	  .attr("clickhist",0)
 	  .attr('clicked',false)
 	  .attr("visibility", "visible")
@@ -6088,7 +6363,7 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 		  .attr('height', function(d){return d['person'].split(',').length * 12;})
 		  .attr("x", xMap0)
 		  .attr("y", yMap01)
-		.style("fill", '#ad9ee3')
+		.style("fill", '#a1c9fb')
 			  .attr("visibility", "hidden")
 		.attr('stroke', '#000000')
 		.attr('stroke-width', '1')
@@ -6104,7 +6379,7 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 		  .attr('height', function(d){return d['organize'].split(',').length * 10;})
 		  .attr("x", xMap01)
 		  .attr("y", function(d) { return y(yValue(d))+20+60-(d['organize'].split(',').length * 10);})
-		.style("fill", '#ad9ee3')
+		.style("fill", '#a1c9fb')
 		.attr('stroke', '#000000')
 		.attr('stroke-width', '1')
 		  .attr("visibility", "hidden")
@@ -6148,13 +6423,63 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 		  .on('mouseup',ClusterGOclick);
         });
 
+
+				var selectedGO;
+				var draggableOptionsGO = {
+					start: function(event, ui) {
+						//get all selected...
+						if (ui.helper.hasClass('selectedGO')) selectedGO = $('div.selectedGO');
+						else {
+							selectedGO = $(ui.helper);
+							$('div.selectedGO').removeClass('selectedGO')
+						}
+					},
+					drag: function(event, ui) {
+						var currentLoc = $(this).position();
+						var prevLoc = $(this).data('prevLoc');
+						if (!prevLoc) {
+							prevLoc = ui.originalPosition;
+						}
+
+						var offsetLeft = currentLoc.left-prevLoc.left;
+						var offsetTop = currentLoc.top-prevLoc.top;
+
+						moveSelectedGO(offsetLeft, offsetTop);
+						$(this).data('prevLoc', currentLoc);
+					}
+				};
+
+				function moveSelectedGO(ol, ot){
+					//console.log("moving to: " + ol + ":" + ot);
+					selectedGO.each(function(){
+						$this =$(this);
+						var p = $this.position();
+						var l = p.left;
+						var t = p.top;
+						//console.log({id: $this.attr('id'), l: l, t: t});
+						$this.css('left', l+ol);
+						$this.css('top', t+ot);
+					})}
+			  
+			  $('.clusterGO-data-box').draggable(draggableOptionsGO);
+			  $('.clusterGO-data-box').addClass('selectedGO');
+
 	$('.clusterGO-data-box').on('drag', reDrawLines);
 	$("#movefixGO").on("change", function(e){
 		if(document.getElementById("movefixGO").checked){
 			document.getElementById('clusterGO').ondragstart = function() { return false; };
+			$('.clusterGO-data-box').removeClass('selectedorg')
+			$('.clusterGO-data-box').removeClass('selectedgraph')
+			$('.clusterGO-data-box').removeClass('selectedchain')				
 		}
 		else{
 			document.getElementById('clusterGO').ondragstart = function() { return true; };
+				if(GraphToGOCollection.length>0)
+					$('.clusterGO-data-box').addClass('selectedgraph')
+				if(OrgToGOCollection.length==0)
+					$('.clusterGO-data-box').addClass('selectedorg')
+				if(ClusterChainToGO.length==0)					
+					$('.clusterGO-data-box').addClass('selectedchain')				
 		};
       })
 	}
@@ -6209,13 +6534,13 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 
 			const rightCustomMenu = document.querySelector('.svg-custom-menu');
 			if(detail=="false" && manualink==false)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Start manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">View Summary</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link From This</li>`
             else if(detail != "false" && manualink==true)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Stop manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link To This</li>`
 			else if(detail == "false" && manualink==true)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Stop manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">View Summary</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link To This</li>`
 			else if(detail != "false" && manualink==false)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Start manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link From This</li>`
 			
             rightCustomMenu.style.display = 'block';
             rightCustomMenu.style.left = event.clientX + 'px';
@@ -6280,9 +6605,13 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 						}
 					}
                   var note = `
-                  <div class="note the-node" id='`+ sid +`' style="z-index: 999;">
+                  <div class="reldoc note the-node" id='`+ sid +`' style="z-index: 999;">
                     <div class='close_note'>X</div>
-                    <h3>`+ sid +`</h3>
+                    <h3>`+ sid +`&nbsp;
+					<label class="switch">
+					  <input type="checkbox" id="movefixgo`+sid+`">
+					  <span class="slider round"></span>
+					</label></h3>
                     <p style="cursor:text;">
                       `+ content +`
                     </p>
@@ -6312,6 +6641,7 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
                       yOffset : y2Loc
                     }
                   });
+				 $('#' + sid).addClass('selectedGO');
 
                   connections5ct.push({ source: circele, sourceid:nameid,target: $('#' + sid),targetid:sid, boxElement: 'all-data-box' });
 				  $('#' + sid).on('drag', function() {
@@ -6522,14 +6852,14 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 			{
 			if(detail=="false")
 			{
-				  circele.setAttribute("style", "fill: #ad9ee3");
+				  circele.setAttribute("style", "fill: #a1c9fb");
 				  circele.setAttribute("stroke","#000000")
 
 			}
 			else
 			{
-				  document.getElementById('cgogid'+nameid).setAttribute("style","fill: #ad9ee3");
-				  document.getElementById('cgooid'+nameid).setAttribute("style","fill: #ad9ee3");
+				  document.getElementById('cgogid'+nameid).setAttribute("style","fill: #a1c9fb");
+				  document.getElementById('cgooid'+nameid).setAttribute("style","fill: #a1c9fb");
 			}
 			}
 			 
@@ -6596,6 +6926,8 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 				hist = parseInt(circele.getAttribute('clickhist'))+1;
 				circele.setAttribute('clickhist', hist);
 				circele.setAttribute('clicked', true);
+				if(!(document.getElementById("movefixgraph").checked))								
+					$('.all-data-box').addClass('selectedGO');				
 				drawPolyLineClusterGO(ClusterGOToGraph);
 			}
 			
@@ -6659,10 +6991,17 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 			}
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
-			circele.setAttribute('clicked', true);			
+			circele.setAttribute('clicked', true);	
+			if(!(document.getElementById("movefixorg").checked))							
+				$('.organize-data-box').addClass('selectedGO');							
 			drawPolyLineClusterGO(ClusterGOToOrg);
 			}}
 			else{
+				if(ClusterGOToGraph.length==0)
+					$('.all-data-box').removeClass('selectedGO')
+				if(ClusterGOToOrg.length==0)					
+					$('.organize-data-box').removeClass('selectedGO')	
+					
 			circele.setAttribute('clicked', false);}
 			}
             }}
@@ -6836,11 +7175,11 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 
 					if(clickhist==0)
 					{
-					circele.setAttribute("style","fill: #ad9ee3");
+					circele.setAttribute("style","fill: #a1c9fb");
 					}
 					else
 					{
-					circele.setAttribute("style","fill: #ad9ee3");
+					circele.setAttribute("style","fill: #a1c9fb");
 					}
 				}
 			}
@@ -6850,12 +7189,12 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 				{
 				if(clickhist==0)
 				{
-				document.getElementById("cgogid"+nameid).setAttribute("style","fill: #ad9ee3");
-				document.getElementById("cgooid"+nameid).setAttribute("style","fill: #ad9ee3");}
+				document.getElementById("cgogid"+nameid).setAttribute("style","fill: #a1c9fb");
+				document.getElementById("cgooid"+nameid).setAttribute("style","fill: #a1c9fb");}
 				else
 				{
-				document.getElementById("cgogid"+nameid).setAttribute("style","fill: #ad9ee3");
-				document.getElementById("cgooid"+nameid).setAttribute("style","fill: #ad9ee3");
+				document.getElementById("cgogid"+nameid).setAttribute("style","fill: #a1c9fb");
+				document.getElementById("cgooid"+nameid).setAttribute("style","fill: #a1c9fb");
 				}}
 			}
 			}
@@ -6912,7 +7251,7 @@ let	yMap01 = function(d) { return y(yValue(d))+20+(60-(d['person'].split(',').le
 		  .attr("cy", yMap)
 		  .attr('map',function(d){return d['map'];})
 		  .attr('org',function(d){return d['organize'];})
-		  .style("fill", '#ad9ee3')
+		  .style("fill", '#a1c9fb')
 		  .attr("clickhist",0)
 		  .attr('clicked',false)
 		  .style("stroke", "black")
@@ -6933,7 +7272,7 @@ svg.selectAll(".rectcom")
 		  .attr('height', function(d){return d['map'].split(',').length * 5;})
 		  .attr("x", xMap0)
 		  .attr("y", yMap01)
-		.style("fill", '#ad9ee3')
+		.style("fill", '#a1c9fb')
 			  .attr("visibility", "hidden")
 		.attr('stroke', '#000000')
 		.attr('stroke-width', '1')
@@ -6949,7 +7288,7 @@ svg.selectAll(".rectcom")
 		  .attr('height', function(d){return d['organize'].split(',').length * 8.5;})
 		  .attr("x", xMap01)
 		  .attr("y", function(d) { return y(yValue(d))+20+60-(d['organize'].split(',').length * 8.5);})
-		.style("fill", '#ad9ee3')
+		.style("fill", '#a1c9fb')
 		.attr('stroke', '#000000')
 		.attr('stroke-width', '1')
 		  .attr("visibility", "hidden")
@@ -6993,13 +7332,63 @@ svg.selectAll(".rectcom")
 		  .on('mouseup',ClusterOMclick);	  
 			});
 			
+				var selectedOM;
+				var draggableOptionsOM = {
+					start: function(event, ui) {
+						//get all selected...
+						if (ui.helper.hasClass('selectedOM')) selectedOM = $('div.selectedOM');
+						else {
+							selectedOM = $(ui.helper);
+							$('div.selectedOM').removeClass('selectedOM')
+						}
+					},
+					drag: function(event, ui) {
+						var currentLoc = $(this).position();
+						var prevLoc = $(this).data('prevLoc');
+						if (!prevLoc) {
+							prevLoc = ui.originalPosition;
+						}
+
+						var offsetLeft = currentLoc.left-prevLoc.left;
+						var offsetTop = currentLoc.top-prevLoc.top;
+
+						moveSelectedOM(offsetLeft, offsetTop);
+						$(this).data('prevLoc', currentLoc);
+					}
+				};
+
+				function moveSelectedOM(ol, ot){
+					//console.log("moving to: " + ol + ":" + ot);
+					selectedOM.each(function(){
+						$this =$(this);
+						var p = $this.position();
+						var l = p.left;
+						var t = p.top;
+						//console.log({id: $this.attr('id'), l: l, t: t});
+						$this.css('left', l+ol);
+						$this.css('top', t+ot);
+					})}
+			  
+			  $('.clusterOM-data-box').draggable(draggableOptionsOM);
+			  $('.clusterOM-data-box').addClass('selectedOM');			
+			
+			
 	$('.clusterOM-data-box').on('drag', reDrawLines);
 	$("#movefixOM").on("change", function(e){
 		if(document.getElementById("movefixOM").checked){
 			document.getElementById('clusterOM').ondragstart = function() { return false; };
+			$('.clusterOM-data-box').removeClass('selectedorg')
+			$('.clusterOM-data-box').removeClass('selectedmap')
+			$('.clusterOM-data-box').removeClass('selectedchain')			
 		}
 		else{
 			document.getElementById('clusterOM').ondragstart = function() { return true; };
+				if(OrgToOMCollection.length>0)
+					$('.clusterOM-data-box').addClass('selectedorg')
+				if(bubbleToOMCollection.length==0)					
+					$('.clusterOM-data-box').addClass('selectedmap')
+				if(ClusterChainToOM.length==0)					
+					$('.clusterOM-data-box').addClass('selectedchain')				
 		};
       })
       }
@@ -7050,13 +7439,13 @@ svg.selectAll(".rectcom")
 			const rightCustomMenu = document.querySelector('.svg-custom-menu');
 			
 			if(detail=="false" && manualink==false)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Start manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">View Summary</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link From This</li>`
             else if(detail != "false" && manualink==true)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Stop manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link To This</li>`
 			else if(detail == "false" && manualink==true)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Stop manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">View Summary</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link To This</li>`
 			else if(detail != "false" && manualink==false)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Start manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link From This</li>`
 
 			rightCustomMenu.style.display = 'block';
             rightCustomMenu.style.left = event.clientX + 'px';
@@ -7131,9 +7520,13 @@ svg.selectAll(".rectcom")
 					}
 					
                   var note = `
-                  <div class="note the-node" id='`+ id +`' style="z-index: 999;">
+                  <div class="reldoc note the-node" id='`+ id +`' style="z-index: 999;">
                     <div class='close_note'>X</div>
-                    <h3>`+ id +`</h3>
+                    <h3>`+ id +`&nbsp;
+					<label class="switch">
+					  <input type="checkbox" id="movefixom`+sid+`">
+					  <span class="slider round"></span>
+					</label></h3>
                     <p style="cursor:text;">
                       `+ content +`
                     </p>
@@ -7374,14 +7767,14 @@ svg.selectAll(".rectcom")
 			{
 			if(detail=="false")
 			{
-				  circele.setAttribute("style", "fill: #ad9ee3");
+				  circele.setAttribute("style", "fill: #a1c9fb");
 				  circele.setAttribute("stroke","#000000")
 
 			}
 			else
 			{
-				  document.getElementById('commid'+nameid).setAttribute("style","fill: #ad9ee3");
-				  document.getElementById('comoid'+nameid).setAttribute("style","fill: #ad9ee3");
+				  document.getElementById('commid'+nameid).setAttribute("style","fill: #a1c9fb");
+				  document.getElementById('comoid'+nameid).setAttribute("style","fill: #a1c9fb");
 			}
 			}			
 
@@ -7447,6 +7840,8 @@ svg.selectAll(".rectcom")
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
 			circele.setAttribute('clicked', true);
+			if(!(document.getElementById("movefixmap").checked))							
+				$('.bubblemap-box').addClass('selectedOM');						
 			drawPolyLineClusterOM(ClusterOMToMap);
 			}
 			
@@ -7511,11 +7906,17 @@ svg.selectAll(".rectcom")
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
 			circele.setAttribute('clicked', true);
-		
+			if(!(document.getElementById("movefixorg").checked))				
+				$('.organize-data-box').addClass('selectedOM');					
 			drawPolyLineClusterOM(ClusterOMToOrg);
 			}}
 			
 			else{
+				if(ClusterOMToMapToGraph.length==0)
+					$('.bubblemap-box').removeClass('selectedOM')
+				if(ClusterOMToOrg.length==0)					
+					$('.organize-data-box').removeClass('selectedOM')
+					
 				circele.setAttribute('clicked', false);}
 			}
             }}
@@ -7685,11 +8086,11 @@ svg.selectAll(".rectcom")
 
 					if(clickhist==0)
 					{
-					circele.setAttribute("style","fill: #ad9ee3");
+					circele.setAttribute("style","fill: #a1c9fb");
 					}
 					else
 					{
-					circele.setAttribute("style","fill: #ad9ee3");
+					circele.setAttribute("style","fill: #a1c9fb");
 					}
 				}
 			}
@@ -7699,12 +8100,12 @@ svg.selectAll(".rectcom")
 				{
 				if(clickhist==0)
 				{
-				document.getElementById("commid"+nameid).setAttribute("style","fill: #ad9ee3");
-				document.getElementById("comoid"+nameid).setAttribute("style","fill: #ad9ee3");}
+				document.getElementById("commid"+nameid).setAttribute("style","fill: #a1c9fb");
+				document.getElementById("comoid"+nameid).setAttribute("style","fill: #a1c9fb");}
 				else
 				{
-				document.getElementById("comoid"+nameid).setAttribute("style","fill: #ad9ee3");
-				document.getElementById("commid"+nameid).setAttribute("style","fill: #ad9ee3");
+				document.getElementById("comoid"+nameid).setAttribute("style","fill: #a1c9fb");
+				document.getElementById("commid"+nameid).setAttribute("style","fill: #a1c9fb");
 				}}
 			}
 			}
@@ -7804,6 +8205,46 @@ data.sort(function(a, b) {
 
 $("#sort").on("change", change);
 
+				var selectedorg;
+				var draggableOptionsorg = {
+					start: function(event, ui) {
+						//get all selected...
+						if (ui.helper.hasClass('selectedorg')) selectedorg = $('div.selectedorg');
+						else {
+							selectedorg = $(ui.helper);
+							$('div.selectedorg').removeClass('selectedorg')
+						}
+					},
+					drag: function(event, ui) {
+						var currentLoc = $(this).position();
+						var prevLoc = $(this).data('prevLoc');
+						if (!prevLoc) {
+							prevLoc = ui.originalPosition;
+						}
+
+						var offsetLeft = currentLoc.left-prevLoc.left;
+						var offsetTop = currentLoc.top-prevLoc.top;
+
+						moveSelectedorg(offsetLeft, offsetTop);
+						$(this).data('prevLoc', currentLoc);
+					}
+				};
+
+				function moveSelectedorg(ol, ot){
+					//console.log("moving to: " + ol + ":" + ot);
+					selectedorg.each(function(){
+						$this =$(this);
+						var p = $this.position();
+						var l = p.left;
+						var t = p.top;
+						//console.log({id: $this.attr('id'), l: l, t: t});
+						$this.css('left', l+ol);
+						$this.css('top', t+ot);
+					})}
+			  
+			  $('.organize-data-box').draggable(draggableOptionsorg);
+			  $('.organize-data-box').addClass('selectedorg');
+
 $('.organize-data-box').on('drag', reDrawLines);
 $('.organize-data-box').on('resize', reDrawLines);
 
@@ -7826,6 +8267,30 @@ function change() {
 			.delay(delay);
 }
 })
+
+		$("#movefixorg").on("change", function(e){
+		if(document.getElementById("movefixorg").checked){
+			document.getElementById('orgbox').ondragstart = function() { return false; };
+			$('.organize-data-box').removeClass('selectedmap')
+			$('.organize-data-box').removeClass('selectedgraph')
+			$('.organize-data-box').removeClass('selectedOM')
+			$('.organize-data-box').removeClass('selectedGO')
+			$('.organize-data-box').removeClass('selectedchain')				
+		}
+		else{
+			document.getElementById('orgbox').ondragstart = function() { return true; };
+				if(GraphToOrgCollection.length>0)
+					$('.organize-data-box').addClass('selectedgraph')
+				if(bubbleToOrgCollection.length==0)					
+					$('.organize-data-box').addClass('selectedmap')
+				if(ClusterGOToOrg.length==0)
+					$('.organize-data-box').addClass('selectedGO')
+				if(ClusterOMToOrg.length==0)					
+					$('.organize-data-box').addClass('selectedOM')
+				if(ClusterChainToOrg.length==0)					
+					$('.organize-data-box').addClass('selectedchain')				
+		};
+      })	
 }
 
 	    function type(d) {
@@ -7864,9 +8329,9 @@ function change() {
 			const rightCustomMenu = document.querySelector('.svg-custom-menu');
 
 			if(manualink==false)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item-${orgid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${orgid} svg-menu-item">Start manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item-${orgid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${orgid} svg-menu-item">Link From This</li>`
 			else
-            rightCustomMenu.innerHTML = `<li class="svg-menu-item-${orgid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${orgid} svg-menu-item">Stop manual link</li>`
+            rightCustomMenu.innerHTML = `<li class="svg-menu-item-${orgid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${orgid} svg-menu-item">Link To This</li>`
             rightCustomMenu.style.display = 'block';
             rightCustomMenu.style.left = event.clientX + 'px';
             rightCustomMenu.style.top = event.clientY + 'px';
@@ -7882,9 +8347,13 @@ function change() {
               scontent = scontent.replace(orgname, `<span class=highlighted-text>${orgname}</span>`);
 	
               var note = `
-              <div class="note the-node" id='`+ sid +`' style="z-index: 999;">
+              <div class="reldoc note the-node" id='`+ sid +`' style="z-index: 999;">
                 <div class='close_note'>X</div>
-                <h3>`+ sid +' '+orgname +`</h3>
+                <h3>`+ sid +' '+orgname +`&nbsp;
+				<label class="switch">
+				  <input type="checkbox" id="movefixo`+sid+`">
+				  <span class="slider round"></span>
+				</label></h3>
                 <p style="cursor:text;">
                   `+ scontent +`
                 </p>
@@ -7915,6 +8384,7 @@ function change() {
                   yOffset : y2Loc
                 }
               });
+			$('#' + sid).addClass('selectedorg');
 
 			connections3ot.push({ source: ele, target: $('#' + sid), targetid:sid, boxElement: 'organize-data-box' });
 				  
@@ -8117,8 +8587,9 @@ function change() {
 				event.target.setAttribute('clickhist', hist);
 				event.target.setAttribute('clicked', true);
 				d3.select(this).style("stroke-width", 1);
+				if(!(document.getElementById("movefixgraph").checked))								
+					$('.all-data-box').addClass('selectedorg');				
 				drawPolyLineOrg(OrgToGraphCollection);
-
 				}
 				
 			if(document.querySelector('.right .bubblemap-box').style.display == 'block')
@@ -8153,6 +8624,8 @@ function change() {
 			event.target.setAttribute('clickhist', hist);
 			event.target.setAttribute('clicked', true);			
 			d3.select(this).style("stroke-width", 1);
+			if(!(document.getElementById("movefixmap").checked))				
+				$('.bubblemap-box').addClass('selectedorg');							
 			drawPolyLineOrg(OrgToMapCollection);
 			}
 			}
@@ -8207,6 +8680,8 @@ function change() {
 					event.target.setAttribute('clickhist', hist);
 					event.target.setAttribute('clicked', true);			
 					d3.select(this).style("stroke-width", 1);
+					if(!(document.getElementById("movefixOM").checked))				
+						$('.clusterOM-data-box').addClass('selectedorg');												
 					drawPolyLineOrg(OrgToOMCollection);				
 				  }
 				}
@@ -8262,6 +8737,8 @@ function change() {
 					event.target.setAttribute('clickhist', hist);
 					event.target.setAttribute('clicked', true);			
 					d3.select(this).style("stroke-width", 1);
+					if(!(document.getElementById("movefixGM").checked))				
+						$('.clusterGM-data-box').addClass('selectedorg');												
 					drawPolyLineOrg(OrgToGOCollection);				
 				  }
 				}
@@ -8316,6 +8793,8 @@ function change() {
 					event.target.setAttribute('clickhist', hist);
 					event.target.setAttribute('clicked', true);			
 					d3.select(this).style("stroke-width", 1);
+					if(!(document.getElementById("movefixCBI").checked))									
+						$('.clusterchain-data-box').addClass('selectedorg');												
 					drawPolyLineOrg(OrgToChainCollection);				
 				  }
 				}
@@ -8323,6 +8802,17 @@ function change() {
 			}
 			
 			else{
+				if(OrgToMapCollection.length==0)
+					$('.bubblemap-box').removeClass('selectedorg')
+				if(OrgToGraphCollection.length==0)					
+					$('.all-data-box').removeClass('selectedorg')
+				if(OrgToGOCollection.length==0)
+					$('.clusterGO-data-box').removeClass('selectedorg')
+				if(OrgToOMCollection.length==0)					
+					$('.clusterOM-data-box').removeClass('selectedorg')
+				if(OrgToChainCollection.length==0)					
+					$('.clusterchain-data-box').removeClass('selectedorg')
+					
 					event.target.setAttribute('clicked', false);
 			}}
 			
@@ -8746,7 +9236,7 @@ svg.selectAll(".dotchain")
 	  .attr('organize',function(d){return d['organize'];})
 	  .attr('clusterchainid',function(d,i){return (i+1);})
 	  .attr('perc',function(d){return d['perc'];})
-	  .style("fill", '#ad9ee3')
+	  .style("fill", '#a1c9fb')
 	  .style("stroke", "black")
 	  .attr("stroke-width",2)	  
 	  .attr("visibility", "visible")	  
@@ -8766,7 +9256,7 @@ svg.selectAll(".dotchain")
 		  .attr('height', function(d){return d['person'].split(',').length * 12;})
 		  .attr("x", xMap0)
 		  .attr("y", function(d) { return y(yValue(d))+20+60-(d['person'].split(',').length * 12);})
-		.style("fill", '#ad9ee3')
+		.style("fill", '#a1c9fb')
 		.attr("visibility", "hidden")
 		.attr('stroke', '#000000')
 		.attr('stroke-width', '1')
@@ -8782,7 +9272,7 @@ svg.selectAll(".dotchain")
 		  .attr('height', function(d){return d['map'].split(',').length * 7.5;})
 		  .attr("x", xMap01)
 		  .attr("y", function(d) { return y(yValue(d))+20+60-(d['map'].split(',').length * 7.5);})
-		.style("fill", '#ad9ee3')
+		.style("fill", '#a1c9fb')
 		.attr('stroke', '#000000')
 		.attr('stroke-width', '1')
 		  .attr("visibility", "hidden")
@@ -8797,7 +9287,7 @@ svg.selectAll(".dotchain")
 		  .attr('height', function(d){return d['organize'].split(',').length * 8.5;})
 		  .attr("x", xMap02)
 		  .attr("y", function(d) { return y(yValue(d))+20+60-(d['organize'].split(',').length * 8.5);})
-		.style("fill", '#ad9ee3')
+		.style("fill", '#a1c9fb')
 		.attr('stroke', '#000000')
 		.attr('stroke-width', '1')
 		  .attr("visibility", "hidden")
@@ -8860,13 +9350,63 @@ svg.selectAll(".dotchain")
 	  
 }
 
+				var selectedchain;
+				var draggableOptionschain = {
+					start: function(event, ui) {
+						//get all selected...
+						if (ui.helper.hasClass('selectedchain')) selectedchain = $('div.selectedchain');
+						else {
+							selectedchain = $(ui.helper);
+							$('div.selectedchain').removeClass('selectedchain')
+						}
+					},
+					drag: function(event, ui) {
+						var currentLoc = $(this).position();
+						var prevLoc = $(this).data('prevLoc');
+						if (!prevLoc) {
+							prevLoc = ui.originalPosition;
+						}
+
+						var offsetLeft = currentLoc.left-prevLoc.left;
+						var offsetTop = currentLoc.top-prevLoc.top;
+
+						moveSelectedchain(offsetLeft, offsetTop);
+						$(this).data('prevLoc', currentLoc);
+					}
+				};
+
+				function moveSelectedchain(ol, ot){
+					//console.log("moving to: " + ol + ":" + ot);
+					selectedchain.each(function(){
+						$this =$(this);
+						var p = $this.position();
+						var l = p.left;
+						var t = p.top;
+						//console.log({id: $this.attr('id'), l: l, t: t});
+						$this.css('left', l+ol);
+						$this.css('top', t+ot);
+					})}
+			  
+			  $('.clusterchain-data-box').draggable(draggableOptionschain);
+			  $('.clusterchain-data-box').addClass('selectedchain');	
+
+
 	$('.clusterchain-data-box').on('drag', reDrawLines);
 	$("#movefixCBI").on("change", function(e){
 		if(document.getElementById("movefixCBI").checked){
 			document.getElementById('clusterChain').ondragstart = function() { return false; };
+			$('.clusterchain-data-box').removeClass('selectedorg')
+			$('.clusterchain-data-box').removeClass('selectedmap')
+			$('.clusterchain-data-box').removeClass('selectedgraph')				
 		}
 		else{
 			document.getElementById('clusterChain').ondragstart = function() { return true; };
+				if(GraphToChainCollection.length>0)
+					$('.clusterchain-data-box').addClass('selectedgraph')
+				if(bubbleToChainCollection.length==0)					
+					$('.clusterchain-data-box').addClass('selectedmap')
+				if(OrgToChainCollection.length==0)
+					$('.clusterchain-data-box').addClass('selectedorg')				
 		};
       })
 
@@ -9420,11 +9960,11 @@ function ClusterChainhover() {
 
 					if(clickhist==0)
 					{
-					circele.setAttribute("style","fill: #ad9ee3");
+					circele.setAttribute("style","fill: #a1c9fb");
 					}
 					else
 					{
-					circele.setAttribute("style","fill: #ad9ee3");
+					circele.setAttribute("style","fill: #a1c9fb");
 					}
 				}
 			}
@@ -9434,14 +9974,14 @@ function ClusterChainhover() {
 				{
 				if(clickhist==0)
 				{
-				document.getElementById("cchaingid"+nameid).setAttribute("style","fill: #ad9ee3");
-				document.getElementById("cchainmid"+nameid).setAttribute("style","fill: #ad9ee3");
-				document.getElementById("cchainoid"+nameid).setAttribute("style","fill: #ad9ee3");}
+				document.getElementById("cchaingid"+nameid).setAttribute("style","fill: #a1c9fb");
+				document.getElementById("cchainmid"+nameid).setAttribute("style","fill: #a1c9fb");
+				document.getElementById("cchainoid"+nameid).setAttribute("style","fill: #a1c9fb");}
 				else
 				{
-				document.getElementById("cchaingid"+nameid).setAttribute("style","fill: #ad9ee3");
-				document.getElementById("cchainmid"+nameid).setAttribute("style","fill: #ad9ee3");
-				document.getElementById("cchainoid"+nameid).setAttribute("style","fill: #ad9ee3");
+				document.getElementById("cchaingid"+nameid).setAttribute("style","fill: #a1c9fb");
+				document.getElementById("cchainmid"+nameid).setAttribute("style","fill: #a1c9fb");
+				document.getElementById("cchainoid"+nameid).setAttribute("style","fill: #a1c9fb");
 				}}
 			}
 			}
@@ -9508,13 +10048,13 @@ function ClusterChainhover() {
 			const rightCustomMenu = document.querySelector('.svg-custom-menu');
 
 			if(detail=="false" && manualink==false)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Start manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">View Summary</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link From This</li>`
             else if(detail != "false" && manualink==true)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Stop manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link To This</li>`
 			else if(detail == "false" && manualink==true)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Detail View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Stop manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">View Summary</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link To This</li>`
 			else if(detail != "false" && manualink==false)
-			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">Change View</li><li class="svg-menu-item3-${nameid} svg-menu-item">Start manual link</li>`
+			rightCustomMenu.innerHTML = `<li class="svg-menu-item0-${nameid} svg-menu-item">Show Relevant Text</li><li class="svg-menu-item1-${nameid} svg-menu-item">Show Compact View</li><li class="svg-menu-item2-${nameid} svg-menu-item">View Summary for All</li><li class="svg-menu-item3-${nameid} svg-menu-item">Link From This</li>`
 
             rightCustomMenu.style.display = 'block';
             rightCustomMenu.style.left = event.clientX + 'px';
@@ -9618,9 +10158,13 @@ function ClusterChainhover() {
 					}
 					
                   var note = `
-                  <div class="note the-node" id='`+ id +`' style="z-index: 999;">
+                  <div class="reldoc note the-node" id='`+ id +`' style="z-index: 999;">
                     <div class='close_note'>X</div>
-                    <h3>`+ id +`</h3>
+                    <h3>`+ id +`&nbsp;
+					<label class="switch">
+					  <input type="checkbox" id="movefixch`+id+`">
+					  <span class="slider round"></span>
+					</label></h3>
                     <p style="cursor:text;">
                       `+ content +`
                     </p>
@@ -9652,6 +10196,7 @@ function ClusterChainhover() {
                   });
 
                   connections7ct.push({ source: circele, sourceid:nameid,target: $('#' + id),targetid:id });
+				  $('#'+id).addClass('selectedchain');	
 				  
 				  $('#' + id).on('drag', function() {
                     ClusterChainToTextCollection = [];
@@ -9933,15 +10478,15 @@ function ClusterChainhover() {
 			{
 			if(detail=="false")
 			{
-				  circele.setAttribute("style", "fill: #ad9ee3");
+				  circele.setAttribute("style", "fill: #a1c9fb");
 				  circele.setAttribute("stroke","#000000")
 
 			}
 			else
 			{
-				  document.getElementById('cchaingid'+nameid).setAttribute("style","fill: #ad9ee3");
-				  document.getElementById('cchainmid'+nameid).setAttribute("style","fill: #ad9ee3");
-				  document.getElementById('cchainoid'+nameid).setAttribute("style","fill: #ad9ee3");
+				  document.getElementById('cchaingid'+nameid).setAttribute("style","fill: #a1c9fb");
+				  document.getElementById('cchainmid'+nameid).setAttribute("style","fill: #a1c9fb");
+				  document.getElementById('cchainoid'+nameid).setAttribute("style","fill: #a1c9fb");
 			}
 			}			
 			
@@ -10085,7 +10630,8 @@ function ClusterChainhover() {
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
 			circele.setAttribute('clicked', true);
-			
+			if(!(document.getElementById("movefixGO").checked))				
+				$('.clusterGO-data-box').addClass('selectedchain');				
 			drawPolyLineClusterChain(ClusterChainToGO);
 			}
 			
@@ -10223,6 +10769,8 @@ function ClusterChainhover() {
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
 			circele.setAttribute('clicked', true);
+			if(!(document.getElementById("movefixGM").checked))							
+				$('.clusterGM-data-box').addClass('selectedchain');							
 			drawPolyLineClusterChain(ClusterChainToGM);
 			}
 			
@@ -10360,6 +10908,8 @@ function ClusterChainhover() {
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
 			circele.setAttribute('clicked', true);
+			if(!(document.getElementById("movefixOM").checked))				
+				$('.clusterOM-data-box').addClass('selectedchain');							
 			drawPolyLineClusterChain(ClusterChainToOM);
 			}
 			
@@ -10423,6 +10973,8 @@ function ClusterChainhover() {
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
 			circele.setAttribute('clicked', true);
+			if(!(document.getElementById("movefixmap").checked))				
+				$('.bubblemap-box').addClass('selectedchain');							
 			drawPolyLineClusterChain(ClusterChainToMap);
 			}
 			
@@ -10488,6 +11040,8 @@ function ClusterChainhover() {
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
 			circele.setAttribute('clicked', true);
+			if(!(document.getElementById("movefixorg").checked))							
+				$('.organize-data-box').addClass('selectedchain');										
 			drawPolyLineClusterChain(ClusterChainToOrg);
 			}
 			
@@ -10552,10 +11106,25 @@ function ClusterChainhover() {
 			hist = parseInt(circele.getAttribute('clickhist'))+1;
 			circele.setAttribute('clickhist', hist);
 			circele.setAttribute('clicked', true);
+			if(!(document.getElementById("movefixgraph").checked))
+				$('.all-data-box').addClass('selectedchain');										
 			drawPolyLineClusterChain(ClusterChainToGraph);
 			}
 			}
 			else{
+				if(ClusterChainToGraph.length==0)
+					$('.all-data-box').removeClass('selectedchain')
+				if(ClusterChainToOrg.length==0)					
+					$('.organize-data-box').removeClass('selectedchain')
+				if(ClusterChainToMap.length==0)
+					$('.bubblemap-box').removeClass('selectedchain')
+				if(ClusterChainToGM.length==0)					
+					$('.clusterGM-data-box').removeClass('selectedchain')
+				if(ClusterChainToGO.length==0)
+					$('.clusterGO-data-box').removeClass('selectedchain')
+				if(ClusterChainToOM.length==0)					
+					$('.clusterOM-data-box').removeClass('selectedchain')
+					
 				circele.setAttribute('clicked', false);}
 			}
             }
@@ -10575,9 +11144,9 @@ function ClusterChainhover() {
 					const rightCustomMenu = document.querySelector('.custom-menu');
 					
 					if(manualink==false)
-					rightCustomMenu.innerHTML = `<li class="svg-menu-item svg-menu-item">Highlight Text and Start link</li><li class="svg-menu-item1 svg-menu-item">Unhighlight Text</li>`
+					rightCustomMenu.innerHTML = `<li class="svg-menu-item svg-menu-item">Highlight Text and Link From This</li><li class="svg-menu-item1 svg-menu-item">Unhighlight Text</li>`
 					else
-					rightCustomMenu.innerHTML = `<li class="svg-menu-item svg-menu-item">Highlight Text and Stop link</li><li class="svg-menu-item1 svg-menu-item">Unhighlight Text</li>`
+					rightCustomMenu.innerHTML = `<li class="svg-menu-item svg-menu-item">Highlight Text and Link To This</li><li class="svg-menu-item1 svg-menu-item">Unhighlight Text</li>`
 					
                     document.querySelector('.custom-menu').style.display = 'block';
                     document.querySelector('.custom-menu').style.left = event.clientX + 'px';
@@ -10752,6 +11321,7 @@ function ClusterChainhover() {
 		  
 		  for (var i = bubbleToTextCollection.length - 1; i >= 0; --i) {
 			  if (bubbleToTextCollection[i].target.ele ==sid) {
+			  $('#' + sid).removeClass('selectedmap');			  				  
 				bubbleToTextCollection.splice(i, 1); 
 			  }}
 		
@@ -10807,6 +11377,16 @@ function ClusterChainhover() {
 			document.querySelectorAll('.link-newbchain').forEach(ele => {
               ele.remove();
             });
+			
+			let elems = document.querySelectorAll(".selectedmap");
+			[].forEach.call(elems, function(el) {
+				el.classList.remove("selectedmap");
+			});
+			$('.bubblemap-box').removeClass('selectedgraph')
+			$('.bubblemap-box').removeClass('selectedorg')
+			$('.bubblemap-box').removeClass('selectedGM')
+			$('.bubblemap-box').removeClass('selectedOM')
+			$('.bubblemap-box').removeClass('selectedchain')
 			
 			document.getElementById('togglee').style.visibility = 'hidden';
           
@@ -10940,6 +11520,7 @@ function ClusterChainhover() {
 		  
 		  for (var i = GraphToTextCollection.length - 1; i >= 0; --i) {
 			  if (GraphToTextCollection[i].target.ele ==sid) {
+				$('#' + sid).removeClass('selectedgraph');			  				  
 				GraphToTextCollection.splice(i, 1); 
 			  }}
 		
@@ -10994,6 +11575,18 @@ function ClusterChainhover() {
 			document.querySelectorAll('.link-newgchain').forEach(ele => {
               ele.remove();
             });			
+			
+			let elems = document.querySelectorAll(".selectedgraph");
+			[].forEach.call(elems, function(el) {
+				el.classList.remove("selectedgraph");
+			});
+
+			$('.all-data-box').removeClass('selectedmap')
+			$('.all-data-box').removeClass('selectedorg')
+			$('.all-data-box').removeClass('selectedGM')
+			$('.all-data-box').removeClass('selectedGO')
+			$('.all-data-box').removeClass('selectedchain')			
+						
 			document.getElementById('togglee').style.visibility = 'hidden';
 
 		  for (var i = bubbleToManCollection.length - 1; i >= 0; --i) {
@@ -11124,6 +11717,7 @@ function ClusterChainhover() {
 
 		for (var i = OrgToTextCollection.length - 1; i >= 0; --i) {
 			  if (OrgToTextCollection[i].target.ele ==sid) {
+			  $('#' + sid).removeClass('selectedorg');							  
 				OrgToTextCollection.splice(i, 1); 
 			  }}
 		
@@ -11178,6 +11772,18 @@ function ClusterChainhover() {
 			document.querySelectorAll('.link-newochain').forEach(ele => {
               ele.remove();
             });			
+			
+			let elems = document.querySelectorAll(".selectedorg");
+			[].forEach.call(elems, function(el) {
+				el.classList.remove("selectedorg");
+			});
+
+			$('.organize-data-box').removeClass('selectedmap')
+			$('.organize-data-box').removeClass('selectedgraph')
+			$('.organize-data-box').removeClass('selectedOM')
+			$('.organize-data-box').removeClass('selectedGO')
+			$('.organize-data-box').removeClass('selectedchain')			
+						
 			document.getElementById('togglee').style.visibility = 'hidden';
 
 		  for (var i = bubbleToManCollection.length - 1; i >= 0; --i) {
@@ -11330,6 +11936,15 @@ function ClusterChainhover() {
 			document.querySelectorAll('.link-newggm').forEach(ele => {
               ele.remove();
             });				
+			let elems = document.querySelectorAll(".selectedGM");
+			[].forEach.call(elems, function(el) {
+				el.classList.remove("selectedGM");
+			});
+
+			$('.clusterGM-data-box').removeClass('selectedmap')
+			$('.clusterGM-data-box').removeClass('selectedgraph')
+			$('.clusterGM-data-box').removeClass('selectedchain')			
+		
 
 		  for (var i = bubbleToManCollection.length - 1; i >= 0; --i) {
 			  e = bubbleToManCollection[i].target.ele;
@@ -11459,6 +12074,7 @@ function ClusterChainhover() {
 
 		for (var i = ClusterGMToTextCollection.length - 1; i >= 0; --i) {
 			  if (ClusterGMToTextCollection[i].target.ele ==sid) {
+			  $('#' + sid).removeClass('selectedGM');										  
 				ClusterGMToTextCollection.splice(i, 1); 
 			  }}
 		
@@ -11497,6 +12113,14 @@ function ClusterChainhover() {
 			document.querySelectorAll('.link-newogo').forEach(ele => {
               ele.remove();
             });				
+			let elems = document.querySelectorAll(".selectedGO");
+			[].forEach.call(elems, function(el) {
+				el.classList.remove("selectedGO");
+			});
+						
+			$('.clusterGO-data-box').removeClass('selectedorg')
+			$('.clusterGO-data-box').removeClass('selectedgraph')
+			$('.clusterGO-data-box').removeClass('selectedchain')		
 
 		  for (var i = bubbleToManCollection.length - 1; i >= 0; --i) {
 			  e = bubbleToManCollection[i].target.ele;
@@ -11627,6 +12251,7 @@ function ClusterChainhover() {
 
 		for (var i = ClusterGOToTextCollection.length - 1; i >= 0; --i) {
 			  if (ClusterGOToTextCollection[i].target.ele ==sid) {
+			  $('#' + sid).removeClass('selectedGO');										  
 				ClusterGOToTextCollection.splice(i, 1); 
 			  }}
 		
@@ -11665,6 +12290,15 @@ function ClusterChainhover() {
 			document.querySelectorAll('.link-newbom').forEach(ele => {
               ele.remove();
             });		
+			let elems = document.querySelectorAll(".selectedOM");
+			[].forEach.call(elems, function(el) {
+				el.classList.remove("selectedOM");
+			});
+			
+			$('.clusterOM-data-box').removeClass('selectedorg')
+			$('.clusterOM-data-box').removeClass('selectedmap')
+			$('.clusterOM-data-box').removeClass('selectedchain')	
+			
 			
 		  for (var i = bubbleToManCollection.length - 1; i >= 0; --i) {
 			  e = bubbleToManCollection[i].target.ele;
@@ -11795,6 +12429,7 @@ function ClusterChainhover() {
 
 		for (var i = ClusterOMToTextCollection.length - 1; i >= 0; --i) {
 			  if (ClusterOMToTextCollection[i].target.ele ==sid) {
+			  $('#' + sid).removeClass('selectedOM');										  
 				ClusterOMToTextCollection.splice(i, 1); 
 			  }}
 		
@@ -11847,6 +12482,14 @@ function ClusterChainhover() {
 			document.querySelectorAll('.link-newochain').forEach(ele => {
               ele.remove();
             });				
+			let elems = document.querySelectorAll(".selectedchain");
+			[].forEach.call(elems, function(el) {
+				el.classList.remove("selectedchain");
+			});
+			
+			$('.clusterchain-data-box').removeClass('selectedorg')
+			$('.clusterchain-data-box').removeClass('selectedmap')
+			$('.clusterchain-data-box').removeClass('selectedgraph')					
 
 		  for (var i = bubbleToManCollection.length - 1; i >= 0; --i) {
 			  e = bubbleToManCollection[i].target.ele;
@@ -11977,6 +12620,7 @@ function ClusterChainhover() {
 		  
 			for (var i = ClusterChainToTextCollection.length - 1; i >= 0; --i) {
 			  if (ClusterChainToTextCollection[i].target.ele ==sid) {
+				$('#' + sid).removeClass('selectedchain');							  
 				ClusterChainToTextCollection.splice(i, 1); 
 			  }}
 		  

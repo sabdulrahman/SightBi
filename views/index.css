@@ -267,6 +267,9 @@ position:relative;
 .switch {
   position: relative;
   display: inline-block;
+  float:right;
+  right:18px;
+  bottom:4px;
   width: 45px;
   height: 20px;
 }
@@ -304,11 +307,11 @@ position:relative;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #c37661;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #c37661;
 }
 
 input:checked + .slider:before {
@@ -396,4 +399,11 @@ color:black;
 .unhighlight { 
 	background-color: #989898; 
 	color:red;
+}
+
+.selected {background-color: #4af;}
+
+div.reldoc{
+    resize:both;
+    overflow:hidden;
 }
