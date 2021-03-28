@@ -407,3 +407,35 @@ div.reldoc{
     resize:both;
     overflow:hidden;
 }
+
+div.clusterchain-data-box{
+    resize:both;
+    overflow:hidden;
+}
+
+.check {
+  position: relative;
+  display: inline-block;
+  float:right;
+  right:30px;
+  bottom:4px;
+}
+
+.check input {
+  width: 24px;
+  height: 24px;
+}
+
+.dropdown{
+	position: relative;
+	float:right;
+	left:80px;
+}
+
+#orgdrop{
+	width:130px;
+}
+
+#persondrop{
+  width:130px;   
+}

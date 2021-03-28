@@ -48,13 +48,12 @@
       </select>
       
       <div class="button-wrapper">
-        <input type="button" value="Display Matrix" class="matrix-button">
-        <input type="button" value="Display Graph" class="graph-button">
-        <input type="button" value="Display Bubble Map" class="bubble-map-button" disabled>
-		<input type="button" value="Display Organizations" class="organize-button">
-		<input type="button" value="Display Clusters" class="cluster-button">
-		<input type="button" value="Display Dates" class="dates-button">
-
+		<input type="button" value=" Graph View " class="graph-button">
+        <input type="button" value=" Map View " class="bubble-map-button" disabled>
+		<input type="button" value=" List View " class="organize-button">		
+		<input type="button" value=" Time-line View " class="dates-button">		
+        <input type="button" value=" Matrix View " class="matrix-button">
+		<input type="button" value=" Relationship-View " class="cluster-button">
       </div>
     </div>
     <svg id="line-canvas" width="100%" >
@@ -63,14 +62,26 @@
 	
     <div class="right" id="board" style = "background-color: #FFFFFF;">
 	
-      <div class="all-data-box note the-node custom-data" id = "graphboxout" style ="left:750px;top:10px;" data-dialog="graph">
+      <div class="all-data-box note the-node custom-data" id = "graphboxout" style ="height:500px;left:750px;top:10px;" data-dialog="graph">
         <div class='close_note'>X</div>
         <h3>Person Info&nbsp;
 		<label class="switch">
 		<input type="checkbox" id="movefixgraph">
 		<span class="slider round"></span>
-		</label></h3>
-        <div class="all-data-wrapper" id="graphbox">
+		</label>
+		<label class="check">
+		<input type="checkbox" id="checkgraph" checked>
+		</label>
+		</h3>
+		<label class="dropdown"><select name="Person" id="persondrop">
+		  <option selected="selected" value="person">Person</option>
+		  <option value="organization">Organization</option>
+		  <option value="location">Location</option>
+		  <option value="date">Date</option>
+		  <option value="phone">Phone number</option>
+		  <option value="misc">Misc</option>
+		</select></label>				
+        <div class="all-data-wrapper" id="graphbox"style ="height:450px;">
           <p class="all-data"></p>
         </div>
       </div>
@@ -91,6 +102,9 @@
 		<label class="switch">
 		<input type="checkbox" id="movefixmap">
 		<span class="slider round"></span>
+		</label>
+		<label class="check">
+		<input type="checkbox" id="checkmap" checked>
 		</label></h3>
         <div class="bubblemap-wrapper" id="mapbox">
           <p class="bubblemap">
@@ -139,8 +153,19 @@
 		<label class="switch">
 		  <input type="checkbox" id="movefixorg">
 		  <span class="slider round"></span>
+		</label>
+		<label class="check">
+		<input type="checkbox" id="checkorg" checked>
 		</label></h3>
 	<label><input type="checkbox" id="sort">Sort by Frequency</label>
+	<label class="dropdown"><select name="Org" id="orgdrop">
+	  <option value="person">Person</option>
+	  <option selected="selected" value="organization">Organization</option>
+	  <option value="location">Location</option>
+	  <option value="date">Date</option>
+	  <option value="phone">Phone number</option>
+	  <option value="misc">Misc</option>
+	</select></label>
       </div>
 	  
 	  <div class="dates-data-box note the-node custom-data" style = "width:500px; height:450px; display:none; background-color: #FFFFFF;">
@@ -164,9 +189,9 @@
 	  
 	  
 	  <div class="btn-group" id="togglee" style="visibility:hidden;position:absolute;right:0px;float:left;" >
-  <button class="allclusterbut">All Cluster</button>
-  <button class="biclusterbut">BiCluster</button>
-  <button class="triclusterbut">TriCluster</button>
+  <button class="biclusterbut">Pairwise Relationship-Views</button>
+  <button class="triclusterbut">Single Relationship-View</button>
+  <button class="allclusterbut">All Relationship-Views</button>  
 </div>
 	  
     </div>
@@ -11254,9 +11279,11 @@ function ClusterChainhover() {
 		var seldoc=[];
 
 		
-        $('select').select2();
+        $('#fileSelect').select2();
+		$('#orgdrop').select2();
+		$('#persondrop').select2();
 		
-        $('select').on('change',function(){
+        $('#fileSelect').on('change',function(){
           var file = $(this).val();
 
           var fileNameShort = file.split(".").slice(0, -1).join(".");
