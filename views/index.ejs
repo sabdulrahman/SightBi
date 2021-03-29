@@ -11276,7 +11276,7 @@ function ClusterChainhover() {
 
         getDocumentData();
 		
-		var seldoc=[];
+
 
 		
         $('#fileSelect').select2();
@@ -11287,13 +11287,14 @@ function ClusterChainhover() {
           var file = $(this).val();
 
           var fileNameShort = file.split(".").slice(0, -1).join(".");
-		
+		  var seldoc=[];
+
 		for (var val in documentData){
 			if(documentData[val].docId==fileNameShort)
-				seldoc.push(documentData[val]);
+				seldoc = documentData[val];
 			}
-
-			data = seldoc[0].docText;
+			console.log(seldoc);
+			data = seldoc.docText;
 			
 //		  console.log(file +''+fileNameShort);
 
