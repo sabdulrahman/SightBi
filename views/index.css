@@ -1,0 +1,446 @@
+html,body {
+	font-family: sans-serif;
+	width: 100%;
+	height: 100%;
+}
+
+
+:root {
+  /* --totalcolsRows: repeat(4, 1fr) !important; */
+}
+
+#mat > div {
+  display: grid !important;
+  grid-template-columns: var(--totalcolsRows) !important;
+}
+
+#top {
+  display: grid !important;
+  grid-template-columns: var(--totalcolsRows) !important;
+  border-bottom: none !important;
+  padding: 5px !important;
+}
+
+#side {
+  display: grid !important;
+  grid-template-rows: var(--totalcolsRows) !important;
+  text-align: right !important;
+  border-right: none !important;
+}
+
+#side > div {
+  padding: 5px !important;
+  min-height: 50px !important;
+  max-height: 50px !important;
+}
+
+#mat > div {
+  max-height: 50px !important;
+  min-height: 50px !important;
+}
+
+#mat > div > div,
+#top > div {
+  max-width: 100px !important;
+  min-width: 100px !important;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 10fr;
+}
+
+.container > div:first-child {
+  min-width: 100px;
+  max-width: 100px;
+}
+
+#mat > div [id^="id_"] {
+  border: 1px solid grey;
+  background: orange;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: auto !important;
+  color: #fff;
+  font-weight: bold;
+}
+
+#mat > div [id^="id_"]:first-of-type {
+  border-left: 2px solid grey;
+}
+
+#mat > div:first-of-type [id^="id_"] {
+  border-top: 2px solid grey;
+}
+
+#mat > div:last-of-type [id^="id_"] {
+  border-bottom: 2px solid grey;
+}
+
+#mat > div [id^="id_"]:last-of-type {
+  border-right: 2px solid grey;
+}
+
+.matrix-element * {
+  font-size: 0.6rem !important;
+}
+
+#top > div {
+  word-wrap: break-word !important;
+  width: 40px !important;
+  min-width: auto !important;
+}
+
+
+#chart {
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+  margin: auto;
+	width: 720px;
+	height: 350px;
+	label {
+		bottom: 6px;
+		right: 40px;
+		font-size: 12px;
+	}
+	svg {
+		.bar {
+			fill: #666666;
+			transition: .2s ease-out;
+			&:hover {
+				fill: brown;
+				transition: .2s ease-out;
+			}
+		}
+		.axis--x path {
+			display: none;
+		}
+		.axis--label {
+			fill: #333333;
+		}
+	}
+	.annotation {
+		margin: 0;
+		margin-left: .4em;
+		font-size: 12px;
+		a {
+			display: inline-block;
+			padding-botom: 4px;
+			color: #333333;
+			text-decoration: none;
+			border-bottom: 1px dotted rgba(0,0,0,.4);
+			transition: .2s ease-out;
+			&:hover {
+				border-bottom: 1px dotted rgba(0,0,0,1);
+				transition: .2s ease-out;
+			}
+		}
+	}
+}
+
+.svg-container {
+    overflow: hidden;
+	position:relative;
+	z-index:1;
+}
+
+#calendar{
+	width:600px;
+	height:300px;
+  border-spacing: 10px;
+  font-size: 1rem;
+position:relative;
+	z-index: 2;
+}
+
+#calendar tbody td{
+	border:1px solid black;
+	text-align:center;
+	vertical-align:top;
+	width:15%
+}
+
+#calendar td.empty{
+	border:none;
+}
+
+
+#calendartemp{
+	width:600px;
+	height:300px;
+  border-spacing: 10px;
+  font-size: 1rem;
+position:relative;
+	z-index: 2;
+}
+
+#calendartemp tbody td{
+	border:1px solid black;
+	text-align:center;
+	vertical-align:top;
+	width:15%
+}
+
+#calendartemp td.empty{
+	border:none;
+}
+
+.axis {
+    shape-rendering: crispEdges;
+}
+.x.axis line {
+    stroke: #fff;
+}
+.x.axis .minor {
+    stroke-opacity: .5;
+}
+.x.axis path {
+    display: none;
+}
+.circle-year {
+    display:block;
+    font-size:0.5em;
+    fill:white;
+}
+.highcharts-figure, .highcharts-data-table table {
+  min-width: 310px; 
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+#container {
+  height: 400px; 
+}
+
+.highcharts-data-table table {
+  font-family: Verdana, sans-serif;
+  border-collapse: collapse;
+  border: 1px solid #EBEBEB;
+  margin: 10px auto;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+.highcharts-data-table caption {
+  padding: 1em 0;
+  font-size: 1.2em;
+  color: #555;
+}
+.highcharts-data-table th {
+  font-weight: 600;
+  padding: 0.5em;
+}
+.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+  padding: 0.5em;
+}
+.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+  background: #f8f8f8;
+}
+.highcharts-data-table tr:hover {
+  background: #f1f7ff;
+}
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  float:right;
+  right:18px;
+  bottom:4px;
+  width: 45px;
+  height: 20px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #c37661;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #c37661;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 20px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.btn-group button {
+  background-color: #4CAF50; /* Green background */
+  border: 1px solid green; /* Green border */
+  color: white; /* White text */
+  padding: 10px 24px; /* Some padding */
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
+}
+
+.btn-group button:not(:last-child) {
+  border-right: none; /* Prevent double borders */
+}
+
+/* Clear floats (clearfix hack) */
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Add a background color on hover */
+.btn-group button:hover {
+  background-color: #3e8e41;
+}
+
+
+.toolTip {
+  position: absolute;
+  display: none;
+  min-width: 80px;
+  height: auto;
+  background: none repeat scroll 0 0 #ffffff;
+  border: 1px solid #6F257F;
+  padding: 14px;
+  text-align: center;
+}
+
+.point {
+  fill: #000;
+  fill-opacity: 0.4;
+}
+
+.point--scanned {
+  fill: orange;
+  fill-opacity: 1;
+  stroke: orange;
+  stroke-width: 3px;
+}
+
+.point--selected {
+  fill: red;
+  fill-opacity: 1;
+  stroke: red;
+  stroke-width: 5px;
+}
+
+.node {
+  fill: none;
+  stroke: #ccc;
+  shape-rendering: crispEdges;
+}
+
+.highlight { 
+	background-color: yellow; 
+color:black;
+}
+
+.unhighlight { 
+	background-color: #989898; 
+	color:red;
+}
+
+.selected {background-color: #4af;}
+
+div.reldoc{
+    resize:both;
+    overflow:hidden;
+}
+
+div.seldoc{
+    resize:both;
+    overflow:hidden;
+}
+
+
+div.clusterchain-data-box{
+    resize:both;
+    overflow:hidden;
+}
+
+.check {
+  position: relative;
+  display: inline-block;
+  float:right;
+  right:30px;
+  bottom:4px;
+}
+
+.check input {
+  width: 24px;
+  height: 24px;
+}
+
+.dropdown{
+	position: relative;
+	float:right;
+}
+
+#orgdrop{
+	width:130px;
+}
+
+#persondrop{
+  width:130px;   
+}
